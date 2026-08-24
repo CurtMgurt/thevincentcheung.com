@@ -105,8 +105,9 @@
           <div class="pinball-scoreboard" aria-live="polite">
             <p>SCORE <strong id="pinball-score">0000</strong></p>
             <p id="pinball-status">ready</p>
+            <span class="pinball-goal-badge" aria-hidden="true">GOAL! +500</span>
           </div>
-          <button class="pinball-reset" type="button">reset game</button>
+          <button class="pinball-reset" type="button" aria-label="Start a new game and change the goalie">&#8635; new game</button>
         </div>
 
         <div class="pinball-machine">
@@ -123,6 +124,6 @@
     <footer><p>&copy; <span id="year"></span> THEVINCENTCHEUNG.COM</p></footer>
     <div class="toast" role="status" aria-live="polite"></div>
     <script src="script.js?v=20260823-single-web"></script>
-    <script src="pinball.js?v=20260823-clean-copy"></script>
+    <script src="pinball.js?v=20260823-clear-lane-goalies"></script>
   </body>
 </html>

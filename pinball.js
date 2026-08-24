@@ -30,6 +30,8 @@
   const MAX_BALL_SPEED = 1120;
   const rootStyles = getComputedStyle(document.documentElement);
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const LAUNCH_RELEASE_MS = reducedMotion ? 45 : 175;
+  const LAUNCH_SPRING_MS = reducedMotion ? 90 : 520;
 
   const color = (name, fallback) => rootStyles.getPropertyValue(name).trim() || fallback;
   const palette = {
@@ -60,8 +62,59 @@
     black: palette.ink
   };
 
+  const goalieLooks = [
+    {
+      label: 'Bluey',
+      kind: 'blue-pup',
+      body: brickColor.aqua,
+      legs: brickColor.blue,
+      accent: brickColor.yellow
+    },
+    {
+      label: 'Donald',
+      kind: 'duck',
+      body: brickColor.blue,
+      legs: brickColor.orange,
+      accent: brickColor.red,
+      hands: brickColor.white
+    },
+    {
+      label: 'Mickey',
+      kind: 'mouse',
+      body: brickColor.black,
+      legs: brickColor.red,
+      accent: brickColor.yellow,
+      hands: brickColor.white
+    },
+    {
+      label: 'Spider-Man',
+      kind: 'spider-hero',
+      body: brickColor.red,
+      legs: brickColor.blue,
+      accent: brickColor.blue,
+      hands: brickColor.red
+    },
+    {
+      label: 'Chip & Dale',
+      kind: 'chip-duo',
+      body: '#9b6848',
+      legs: '#76503d',
+      accent: '#f3d0a4',
+      hands: '#9b6848'
+    },
+    {
+      label: 'Elmo',
+      kind: 'elmo',
+      body: brickColor.red,
+      legs: brickColor.red,
+      accent: brickColor.orange,
+      hands: brickColor.red
+    }
+  ];
+
   const scoreDisplay = document.querySelector('#pinball-score');
   const statusDisplay = document.querySelector('#pinball-status');
+  const scoreboard = document.querySelector('.pinball-scoreboard');
   const launchButtons = [...document.querySelectorAll('.pinball-launch')];
   const resetButtons = [...document.querySelectorAll('.pinball-reset')];
   const leftButtons = [...document.querySelectorAll('.pinball-left')];
@@ -80,12 +133,13 @@
     state: 'ready',
     respawnAt: 0,
     goalArmed: true,
-    cradleSide: null,
-    cradleStartedAt: 0,
-    cradleCooldownUntil: 0,
-    assistedShot: false,
     goalRewardStartedAt: 0,
     goalRewardUntil: 0,
+    flipperHits: 0,
+    goals: 0,
+    goalieTheme: -1,
+    launchStartedAt: 0,
+    launchGateClosed: false,
     status: '',
     shownScore: -1,
     particles: [],
@@ -116,6 +170,14 @@
     { ax: 392, ay: 466, bx: 332, by: 524 }
   ];
 
+  // These close only after the launched ball clears the shooter lane. The
+  // angled upper gate returns a descending ball to the playfield, while the
+  // lower guard stops a loose ball from sneaking in around the lane's throat.
+  const launchGates = [
+    { ax: 405, ay: 270, bx: 449, by: 250 },
+    { ax: 405, ay: 542, bx: 443, by: 557 }
+  ];
+
   const slings = [
     { ax: 94, ay: 452, bx: 151, by: 510, lastHit: -1000, side: 'left' },
     { ax: 386, ay: 452, bx: 329, by: 510, lastHit: -1000, side: 'right' }
@@ -123,8 +185,7 @@
 
   const bumpers = [
     { x: 139, y: 178, radius: 31, color: brickColor.aqua, points: 100, label: '+100', lastHit: -1000 },
-    { x: 319, y: 195, radius: 34, color: brickColor.yellow, points: 100, label: '+100', lastHit: -1000 },
-    { x: 235, y: 303, radius: 37, color: brickColor.green, points: 150, label: '+150', lastHit: -1000, planet: true }
+    { x: 319, y: 195, radius: 34, color: brickColor.yellow, points: 100, label: '+100', lastHit: -1000 }
   ];
 
   const blockTargets = [
@@ -135,12 +196,12 @@
   ];
 
   const goal = {
-    left: 174,
-    right: 306,
+    left: 92,
+    right: 388,
     lineY: 98,
     keeperY: 124,
-    keeperHalfWidth: 25,
-    keeperRadius: 9,
+    keeperHalfWidth: 19,
+    keeperRadius: 7,
     keeperX: 240,
     lastHit: -1000
   };
@@ -150,8 +211,8 @@
       side: 'left',
       x: 158,
       y: 552,
-      length: 70,
-      radius: 11,
+      length: 64,
+      radius: 11.25,
       restAngle: 0.27,
       activeAngle: -0.43,
       angle: 0.27,
@@ -161,8 +222,8 @@
       side: 'right',
       x: 322,
       y: 552,
-      length: 70,
-      radius: 11,
+      length: 64,
+      radius: 11.25,
       restAngle: Math.PI - 0.27,
       activeAngle: Math.PI + 0.43,
       angle: Math.PI - 0.27,
@@ -208,6 +269,10 @@
       label = 'next ball...';
       ariaLabel = 'Waiting for the next ball';
       disabled = true;
+    } else if (game.state === 'launching') {
+      label = 'launching...';
+      ariaLabel = 'Launcher spring is releasing the ball';
+      disabled = true;
     } else if (game.state === 'gameover') {
       label = 'play again';
       ariaLabel = 'Start a new game';
@@ -232,11 +297,13 @@
     ball.vx = 0;
     ball.vy = 0;
     ball.active = false;
-    game.cradleSide = null;
-    game.assistedShot = false;
+    game.launchStartedAt = 0;
+    game.launchGateClosed = false;
   }
 
   function resetGame() {
+    game.goalieTheme = (game.goalieTheme + 1) % goalieLooks.length;
+    if (scoreboard) scoreboard.classList.remove('goal-pop');
     game.score = 0;
     game.lives = 3;
     game.state = 'ready';
@@ -249,15 +316,18 @@
     goal.lastHit = -1000;
     goal.keeperX = 240;
     game.goalArmed = true;
-    game.cradleSide = null;
-    game.cradleStartedAt = 0;
-    game.cradleCooldownUntil = 0;
-    game.assistedShot = false;
     game.goalRewardStartedAt = 0;
     game.goalRewardUntil = 0;
+    game.flipperHits = 0;
+    game.goals = 0;
     parkBall();
     updateHud();
     setReadyStatus();
+    const goalieLabel = goalieLooks[game.goalieTheme].label;
+    resetButtons.forEach((button) => {
+      button.title = `Goalie: ${goalieLabel}. Start a new game to change goalie.`;
+    });
+    canvas.setAttribute('aria-label', `Brickball game with two flippers and a ${goalieLabel} goalie.`);
   }
 
   function launchBall() {
@@ -268,123 +338,34 @@
     }
     if (game.state !== 'ready') return;
 
+    parkBall();
+    game.launchStartedAt = performance.now();
+    game.launchGateClosed = false;
+    // The opening orbit should not score by itself; the goal arms after the
+    // ball returns to the lower playfield and is available to the flippers.
+    game.goalArmed = false;
+    game.state = 'launching';
+    setStatus('pull...');
+    updatePrimaryControls();
+    pinballSound(145, 230);
+    canvas.focus({ preventScroll: true });
+  }
+
+  function releaseBall(now) {
+    if (game.state !== 'launching') return;
     ball.active = true;
     ball.vx = 0;
     ball.vy = -930;
-    game.goalArmed = true;
     game.state = 'playing';
-    game.cradleSide = null;
-    game.cradleCooldownUntil = performance.now() + 650;
-    game.assistedShot = false;
+    game.goalArmed = false;
     setStatus('play!');
     updatePrimaryControls();
     pinballSound(190, 520);
     burst(ball.x, ball.y, palette.butter, 8, 115);
-    canvas.focus({ preventScroll: true });
   }
 
   function primaryAction() {
     if (game.state === 'ready' || game.state === 'gameover') launchBall();
-  }
-
-  function flipperHeld(side) {
-    return side === 'left' ? leftDown() : rightDown();
-  }
-
-  function cradlePosition(flipper) {
-    const amount = 0.62;
-    const angle = flipper.activeAngle;
-    const pointX = flipper.x + Math.cos(angle) * flipper.length * amount;
-    const pointY = flipper.y + Math.sin(angle) * flipper.length * amount;
-    const normalX = flipper.side === 'left' ? Math.sin(angle) : -Math.sin(angle);
-    const normalY = -Math.abs(Math.cos(angle));
-    const lift = ball.radius + flipper.radius + 2;
-    return { x: pointX + normalX * lift, y: pointY + normalY * lift };
-  }
-
-  function placeBallOnCradle() {
-    const flipper = flippers.find((item) => item.side === game.cradleSide);
-    if (!flipper) return;
-    const position = cradlePosition(flipper);
-    ball.x = position.x;
-    ball.y = position.y;
-    ball.vx = 0;
-    ball.vy = 0;
-    ball.active = true;
-  }
-
-  function beginCradle(side, now) {
-    game.cradleSide = side;
-    game.cradleStartedAt = now;
-    game.assistedShot = false;
-    placeBallOnCradle();
-    setStatus('caught!');
-    pinballSound(260, 560);
-    burst(ball.x, ball.y, brickColor.yellow, reducedMotion ? 4 : 10, 105);
-  }
-
-  function tryFlipperCradle(now) {
-    if (game.cradleSide || game.assistedShot || now < game.cradleCooldownUntil) return false;
-    if (ball.vy < 55 || ball.y < 462 || ball.y > 559) return false;
-
-    let best = null;
-    flippers.forEach((flipper) => {
-      if (!flipperHeld(flipper.side)) return;
-      const inSideLane = flipper.side === 'left'
-        ? ball.x > 96 && ball.x < 246
-        : ball.x > 234 && ball.x < 384;
-      if (!inSideLane) return;
-
-      const endX = flipper.x + Math.cos(flipper.activeAngle) * flipper.length;
-      const endY = flipper.y + Math.sin(flipper.activeAngle) * flipper.length;
-      const nearest = closestPointOnSegment(ball.x, ball.y, flipper.x, flipper.y, endX, endY);
-      const distance = Math.hypot(ball.x - nearest.x, ball.y - nearest.y);
-      if (distance > ball.radius + flipper.radius + 31) return;
-      if (!best || distance < best.distance) best = { side: flipper.side, distance };
-    });
-
-    if (!best) return false;
-    beginCradle(best.side, now);
-    return true;
-  }
-
-  function cradleTargetX(side, now) {
-    goal.keeperX = keeperPosition(now);
-    const leftCorner = goal.left + 26;
-    const rightCorner = goal.right - 26;
-    const oppositeCorner = side === 'left' ? rightCorner : leftCorner;
-    const otherCorner = side === 'left' ? leftCorner : rightCorner;
-    const oppositeClearance = Math.abs(oppositeCorner - goal.keeperX);
-    const otherClearance = Math.abs(otherCorner - goal.keeperX);
-    return otherClearance > oppositeClearance + 24 ? otherCorner : oppositeCorner;
-  }
-
-  function shootFromCradle(side, now) {
-    const targetX = cradleTargetX(side, now);
-    const targetY = goal.lineY - 8;
-    const flightTime = 0.52;
-    const dx = targetX - ball.x;
-    const dy = targetY - ball.y;
-
-    game.cradleSide = null;
-    game.cradleCooldownUntil = now + 1050;
-    game.goalArmed = true;
-    game.assistedShot = true;
-    ball.vx = dx / flightTime;
-    ball.vy = (dy - 0.5 * GRAVITY * flightTime * flightTime) / flightTime;
-    setStatus('shoot!');
-    pinballSound(310, 880);
-    burst(ball.x, ball.y, side === 'left' ? brickColor.red : brickColor.aqua, reducedMotion ? 6 : 14, 175);
-  }
-
-  function updateCradle(now) {
-    if (!game.cradleSide) return false;
-    if (flipperHeld(game.cradleSide)) {
-      placeBallOnCradle();
-      return true;
-    }
-    shootFromCradle(game.cradleSide, now);
-    return false;
   }
 
   function loseBall(now) {
@@ -394,16 +375,12 @@
 
     if (game.lives <= 0) {
       game.state = 'gameover';
-      game.cradleSide = null;
-      game.assistedShot = false;
       updatePrimaryControls();
       setStatus('game over');
       return;
     }
 
     game.state = 'between';
-    game.cradleSide = null;
-    game.assistedShot = false;
     game.respawnAt = now + 900;
     setStatus(`${game.lives} left`);
     updatePrimaryControls();
@@ -574,13 +551,13 @@
       brickColor.orange,
       brickColor.white
     ];
-    const count = reducedMotion ? 18 : 52;
+    const count = reducedMotion ? 14 : 38;
     for (let index = 0; index < count; index += 1) {
       const angle = -Math.PI + Math.random() * Math.PI;
-      const velocity = 150 + Math.random() * 310;
+      const velocity = 145 + Math.random() * 260;
       game.particles.push({
         kind: index % 3 === 0 ? 'stud' : 'brick',
-        x: x + (Math.random() - 0.5) * 110,
+        x: x + (Math.random() - 0.5) * 112,
         y: y + 12 + Math.random() * 16,
         vx: Math.cos(angle) * velocity,
         vy: Math.sin(angle) * velocity - 120,
@@ -590,23 +567,30 @@
         height: 5 + Math.random() * 5,
         rotation: Math.random() * Math.PI,
         spin: (Math.random() - 0.5) * 11,
-        life: 1.45 + Math.random() * 0.55,
-        maxLife: 2
+        life: 1.2 + Math.random() * 0.5,
+        maxLife: 1.7
       });
     }
   }
 
   function startGoalReward(x, now) {
     game.goalRewardStartedAt = now;
-    game.goalRewardUntil = now + 1850;
+    game.goalRewardUntil = now + 1500;
     studConfetti(x, goal.lineY);
+    if (scoreboard) {
+      scoreboard.classList.remove('goal-pop');
+      void scoreboard.offsetWidth;
+      scoreboard.classList.add('goal-pop');
+      window.setTimeout(() => scoreboard.classList.remove('goal-pop'), 1280);
+    }
     pinballSound(280, 760);
     window.setTimeout(() => pinballSound(390, 930), 120);
     window.setTimeout(() => pinballSound(520, 1120), 255);
+    window.setTimeout(() => pinballSound(680, 1260), 420);
   }
 
   function keeperPosition(now) {
-    return 240 + Math.sin(now / 620) * 42;
+    return 240 + Math.sin(now / 950) * 22;
   }
 
   function collideGoalie(now) {
@@ -646,7 +630,6 @@
     }
 
     game.goalArmed = false;
-    game.assistedShot = false;
     if (now - goal.lastHit > 220) {
       goal.lastHit = now;
       addScore(25, goal.keeperX, goal.keeperY - 18, 'SAVE! +25', palette.sky);
@@ -663,7 +646,7 @@
     if (!game.goalArmed || !crossedLine || !insidePosts) return;
 
     game.goalArmed = false;
-    game.assistedShot = false;
+    game.goals += 1;
     addScore(500, ball.x, goal.lineY, 'GOAL! +500', palette.butter);
     setStatus('GOAL! +500');
     startGoalReward(ball.x, now);
@@ -700,9 +683,25 @@
     const incoming = relativeX * nx + relativeY * ny;
 
     if (incoming < 0) {
-      const impulse = -(1.72 * incoming) + (pressed ? 32 : 0);
+      // A stationary raised flipper behaves like a real pinball trap: it has
+      // very little rebound and enough surface friction for a slow ball to
+      // settle near the hinge. Rotation—not a hidden catch—creates the shot.
+      const flipperMoving = pressed && Math.abs(flipper.omega) > 0.8;
+      const heldTrap = pressed && !flipperMoving;
+      const restitution = flipperMoving ? 0.92 : heldTrap ? 0.06 : 0.58;
+      const impulse = -((1 + restitution) * incoming) + (flipperMoving ? 46 : 0);
       ball.vx += nx * impulse;
       ball.vy += ny * impulse;
+
+      if (heldTrap) {
+        const tangentX = -ny;
+        const tangentY = nx;
+        const tangentSpeed = ball.vx * tangentX + ball.vy * tangentY;
+        const friction = Math.abs(tangentSpeed) < 280 ? 0.52 : 0.3;
+        ball.vx -= tangentX * tangentSpeed * friction;
+        ball.vy -= tangentY * tangentSpeed * friction;
+      }
+      if (pressed) game.flipperHits += 1;
     }
   }
 
@@ -718,18 +717,24 @@
     const rewardActive = now < game.goalRewardUntil;
     canvas.dataset.ballX = ball.x.toFixed(1);
     canvas.dataset.ballY = ball.y.toFixed(1);
+    canvas.dataset.ballVx = ball.vx.toFixed(1);
+    canvas.dataset.ballVy = ball.vy.toFixed(1);
     canvas.dataset.ballActive = String(ball.active);
     canvas.dataset.gameState = game.state;
     canvas.dataset.goalieX = goal.keeperX.toFixed(1);
     canvas.dataset.goalArmed = String(game.goalArmed);
-    canvas.dataset.cradle = game.cradleSide || 'none';
-    canvas.dataset.cradleSide = game.cradleSide || 'none';
-    canvas.dataset.cradleActive = String(Boolean(game.cradleSide));
-    canvas.dataset.cradleHoldMs = game.cradleSide ? Math.max(0, now - game.cradleStartedAt).toFixed(0) : '0';
-    canvas.dataset.cradleReady = String(
-      game.state === 'playing' && !game.cradleSide && !game.assistedShot && now >= game.cradleCooldownUntil
-    );
-    canvas.dataset.assistedShot = String(game.assistedShot);
+    canvas.dataset.flipperHits = String(game.flipperHits);
+    canvas.dataset.goals = String(game.goals);
+    canvas.dataset.goalieTheme = String(game.goalieTheme);
+    canvas.dataset.launchGateClosed = String(game.launchGateClosed);
+    canvas.dataset.launchPhase = game.state === 'launching'
+      ? clamp((now - game.launchStartedAt) / LAUNCH_RELEASE_MS, 0, 1).toFixed(3)
+      : '0.000';
+    const leftTipX = flippers[0].x + Math.cos(flippers[0].angle) * flippers[0].length;
+    const rightTipX = flippers[1].x + Math.cos(flippers[1].angle) * flippers[1].length;
+    canvas.dataset.flipperGap = Math.max(0, rightTipX - leftTipX - flippers[0].radius - flippers[1].radius).toFixed(1);
+    canvas.dataset.leftFlipperOmega = flippers[0].omega.toFixed(2);
+    canvas.dataset.rightFlipperOmega = flippers[1].omega.toFixed(2);
     canvas.dataset.goalReward = String(rewardActive);
     canvas.dataset.rewardProgress = rewardActive && game.goalRewardUntil > game.goalRewardStartedAt
       ? clamp((now - game.goalRewardStartedAt) / (game.goalRewardUntil - game.goalRewardStartedAt), 0, 1).toFixed(3)
@@ -741,7 +746,7 @@
       const pressed = flipper.side === 'left' ? leftDown() : rightDown();
       const target = pressed ? flipper.activeAngle : flipper.restAngle;
       const oldAngle = flipper.angle;
-      const response = pressed ? 32 : 20;
+      const response = pressed ? 38 : 22;
       flipper.angle += (target - flipper.angle) * Math.min(1, response * dt);
       flipper.omega = (flipper.angle - oldAngle) / dt;
     });
@@ -774,8 +779,11 @@
       setReadyStatus();
     }
 
+    if (game.state === 'launching' && now - game.launchStartedAt >= LAUNCH_RELEASE_MS) {
+      releaseBall(now);
+    }
+
     if (!ball.active) return;
-    if (updateCradle(now)) return;
 
     const previousY = ball.y;
     const drag = Math.pow(0.9984, dt * 60);
@@ -783,35 +791,32 @@
     ball.vy = ball.vy * drag + GRAVITY * dt;
     ball.x += ball.vx * dt;
     ball.y += ball.vy * dt;
-    if (tryFlipperCradle(now)) return;
+    if (!game.launchGateClosed && ball.y < 235) game.launchGateClosed = true;
 
     for (let pass = 0; pass < 2; pass += 1) {
-      const activeWalls = game.assistedShot ? walls.slice(0, 9) : walls;
-      activeWalls.forEach((wall) => collideSegment(wall));
-
-      if (!game.assistedShot) {
-        slings.forEach((sling) => {
-          if (!collideSegment(sling, 6, 0.9, 78)) return;
-          if (now - sling.lastHit > 180) {
-            sling.lastHit = now;
-            const x = (sling.ax + sling.bx) / 2;
-            const y = (sling.ay + sling.by) / 2;
-            addScore(25, x, y, '+25', palette.peach);
-          }
-        });
-
-        bumpers.forEach((bumper) => collideBumper(bumper, now));
-        blockTargets.forEach((target) => collideTarget(target, now));
+      walls.forEach((wall) => collideSegment(wall));
+      if (game.launchGateClosed) {
+        launchGates.forEach((gate) => collideSegment(gate, 5, 0.84, 36));
       }
+
+      slings.forEach((sling) => {
+        if (!collideSegment(sling, 6, 0.9, 78)) return;
+        if (now - sling.lastHit > 180) {
+          sling.lastHit = now;
+          const x = (sling.ax + sling.bx) / 2;
+          const y = (sling.ay + sling.by) / 2;
+          addScore(25, x, y, '+25', palette.peach);
+        }
+      });
+
+      bumpers.forEach((bumper) => collideBumper(bumper, now));
+      blockTargets.forEach((target) => collideTarget(target, now));
       collideGoalie(now);
-      if (!game.assistedShot) {
-        collideFlipper(flippers[0], leftDown());
-        collideFlipper(flippers[1], rightDown());
-      }
+      collideFlipper(flippers[0], leftDown());
+      collideFlipper(flippers[1], rightDown());
     }
 
     checkGoal(previousY, now);
-    if (game.assistedShot && (ball.vy >= 0 || ball.y < 58)) game.assistedShot = false;
     capBallSpeed();
     if (ball.y - ball.radius > HEIGHT + 20) loseBall(now);
   }
@@ -834,40 +839,434 @@
   function drawStud(ctx, x, y, radius, fill, outline = palette.ink) {
     ctx.save();
     ctx.beginPath();
+    ctx.arc(x, y + Math.max(1.5, radius * 0.24), radius * 1.04, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(49,54,56,.24)';
+    ctx.fill();
+    ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fillStyle = fill;
     ctx.fill();
     if (outline) {
       ctx.strokeStyle = outline;
-      ctx.lineWidth = Math.max(1.2, radius * 0.25);
+      ctx.lineWidth = Math.max(1.7, radius * 0.3);
       ctx.stroke();
     }
     ctx.beginPath();
-    ctx.arc(x - radius * 0.24, y - radius * 0.3, radius * 0.27, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,.34)';
+    ctx.arc(x, y, radius * 0.65, Math.PI * 0.08, Math.PI * 1.08);
+    ctx.strokeStyle = 'rgba(255,255,255,.24)';
+    ctx.lineWidth = Math.max(1, radius * 0.16);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x - radius * 0.26, y - radius * 0.32, radius * 0.25, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,.48)';
     ctx.fill();
     ctx.restore();
   }
 
   function drawBrick(x, y, width, height, fill, studs = 2, radius = 5) {
     context.save();
-    context.shadowColor = 'rgba(49,54,56,.15)';
+    context.shadowColor = 'rgba(49,54,56,.24)';
     context.shadowBlur = 0;
-    context.shadowOffsetY = 3;
+    context.shadowOffsetY = 6;
     roundedRectPath(context, x, y, width, height, radius);
     context.fillStyle = fill;
     context.fill();
     context.shadowColor = 'transparent';
     context.strokeStyle = palette.ink;
-    context.lineWidth = 2.5;
+    context.lineWidth = 4;
     context.stroke();
-    context.fillStyle = 'rgba(255,255,255,.22)';
-    roundedRectPath(context, x + 4, y + 4, width - 8, Math.max(3, height * 0.16), 2);
+    context.fillStyle = 'rgba(255,255,255,.28)';
+    roundedRectPath(context, x + 4, y + 4, Math.max(2, width - 8), Math.max(4, height * 0.18), 2);
+    context.fill();
+    context.fillStyle = 'rgba(49,54,56,.13)';
+    roundedRectPath(context, x + 3, y + height - Math.max(5, height * 0.2), Math.max(2, width - 6), Math.max(3, height * 0.18), 2);
     context.fill();
 
     const spacing = width / studs;
     for (let index = 0; index < studs; index += 1) {
-      drawStud(context, x + spacing * (index + 0.5), y + 1, Math.min(5, spacing * 0.22), fill);
+      drawStud(context, x + spacing * (index + 0.5), y + 1, Math.min(6.6, spacing * 0.25), fill);
+    }
+    context.restore();
+  }
+
+  function drawBrickBeam(segment, fill, thickness = 20) {
+    const dx = segment.bx - segment.ax;
+    const dy = segment.by - segment.ay;
+    const length = Math.hypot(dx, dy);
+    const angle = Math.atan2(dy, dx);
+    const brickCount = Math.max(1, Math.round(length / 30));
+    const brickLength = length / brickCount;
+
+    context.save();
+    context.translate(segment.ax, segment.ay);
+    context.rotate(angle);
+    context.shadowColor = 'rgba(49,54,56,.18)';
+    context.shadowOffsetY = 4;
+    roundedRectPath(context, 0, -thickness / 2, length, thickness, 5);
+    context.fillStyle = fill;
+    context.fill();
+    context.shadowColor = 'transparent';
+    context.strokeStyle = palette.ink;
+    context.lineWidth = 4;
+    context.stroke();
+
+    context.fillStyle = 'rgba(255,255,255,.25)';
+    roundedRectPath(context, 4, -thickness / 2 + 3, Math.max(2, length - 8), 4, 2);
+    context.fill();
+    context.fillStyle = 'rgba(49,54,56,.12)';
+    roundedRectPath(context, 3, thickness / 2 - 5, Math.max(2, length - 6), 4, 2);
+    context.fill();
+
+    for (let index = 1; index < brickCount; index += 1) {
+      const seamX = brickLength * index;
+      context.strokeStyle = 'rgba(49,54,56,.58)';
+      context.lineWidth = 2.2;
+      context.beginPath();
+      context.moveTo(seamX, -thickness / 2 + 1);
+      context.lineTo(seamX, thickness / 2 - 1);
+      context.stroke();
+    }
+    for (let index = 0; index < brickCount; index += 1) {
+      drawStud(context, brickLength * (index + 0.5), -thickness / 2 + 1, 4.8, fill);
+    }
+    context.restore();
+  }
+
+  function drawToyFigure(x, y, scale, options = {}) {
+    const bodyColor = options.body || brickColor.aqua;
+    const legColor = options.legs || brickColor.blue;
+    const accentColor = options.accent || brickColor.red;
+    const kind = options.kind || 'person';
+    const headColors = {
+      'blue-pup': brickColor.aqua,
+      duck: brickColor.white,
+      mouse: brickColor.black,
+      'spider-hero': brickColor.red,
+      chipmunk: '#9b6848',
+      elmo: brickColor.red
+    };
+    const headColor = options.head || headColors[kind] || brickColor.yellow;
+    const handColor = options.hands || (kind === 'person' ? brickColor.yellow : headColor);
+    const armsUp = Boolean(options.armsUp);
+    const flip = options.flip ? -1 : 1;
+
+    context.save();
+    context.translate(x, y);
+    context.scale(scale * flip, scale);
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
+
+    // Legs and hip block.
+    drawBrick(-11, 4, 22, 8, legColor, 2, 2);
+    drawBrick(-11, 11, 9, 21, legColor, 1, 2);
+    drawBrick(2, 11, 9, 21, legColor, 1, 2);
+    if (kind === 'duck' || kind === 'mouse') {
+      const shoeColor = kind === 'duck' ? brickColor.orange : brickColor.yellow;
+      drawBrick(-13, 27, 12, 7, shoeColor, 1, 3);
+      drawBrick(1, 27, 12, 7, shoeColor, 1, 3);
+    }
+
+    // Tapered torso with a simple shirt badge.
+    context.beginPath();
+    context.moveTo(-13, -20);
+    context.lineTo(13, -20);
+    context.lineTo(10, 5);
+    context.lineTo(-10, 5);
+    context.closePath();
+    context.fillStyle = bodyColor;
+    context.fill();
+    context.strokeStyle = palette.ink;
+    context.lineWidth = 3.5;
+    context.stroke();
+    if (kind === 'mouse') {
+      drawStud(context, -4, -6, 2.2, brickColor.yellow, palette.ink);
+      drawStud(context, 4, -6, 2.2, brickColor.yellow, palette.ink);
+    } else if (kind === 'duck') {
+      context.strokeStyle = brickColor.white;
+      context.lineWidth = 3;
+      context.beginPath();
+      context.moveTo(-8, -17);
+      context.lineTo(0, -9);
+      context.lineTo(8, -17);
+      context.stroke();
+      context.fillStyle = brickColor.red;
+      context.beginPath();
+      context.moveTo(-6, -9);
+      context.lineTo(0, -5);
+      context.lineTo(6, -9);
+      context.lineTo(0, -12);
+      context.closePath();
+      context.fill();
+    } else if (kind === 'spider-hero') {
+      context.strokeStyle = palette.ink;
+      context.lineWidth = 1.5;
+      context.beginPath();
+      context.moveTo(0, -15);
+      context.lineTo(0, -4);
+      context.moveTo(-5, -12);
+      context.lineTo(5, -7);
+      context.moveTo(5, -12);
+      context.lineTo(-5, -7);
+      context.stroke();
+    } else if (kind === 'chipmunk') {
+      context.fillStyle = accentColor;
+      roundedRectPath(context, -6, -17, 12, 20, 6);
+      context.fill();
+    } else if (kind !== 'elmo') {
+      context.fillStyle = accentColor;
+      roundedRectPath(context, -5, -12, 10, 9, 2);
+      context.fill();
+    }
+
+    // Hinged arms and round hands.
+    const armY = armsUp ? -30 : -7;
+    context.strokeStyle = palette.ink;
+    context.lineWidth = 10;
+    context.beginPath();
+    context.moveTo(-11, -16);
+    context.lineTo(-23, armY);
+    context.moveTo(11, -16);
+    context.lineTo(23, armY);
+    context.stroke();
+    context.strokeStyle = bodyColor;
+    context.lineWidth = 6;
+    context.stroke();
+    drawStud(context, -24, armY, 5.3, handColor);
+    drawStud(context, 24, armY, 5.3, handColor);
+
+    // Strong silhouettes make the tiny block characters readable at a glance.
+    if (kind === 'blue-pup') {
+      context.fillStyle = brickColor.blue;
+      context.strokeStyle = palette.ink;
+      context.lineWidth = 3;
+      context.beginPath();
+      context.moveTo(-12, -41);
+      context.lineTo(-15, -58);
+      context.lineTo(-3, -47);
+      context.lineTo(3, -47);
+      context.lineTo(15, -58);
+      context.lineTo(12, -41);
+      context.closePath();
+      context.fill();
+      context.stroke();
+    } else if (kind === 'mouse') {
+      drawStud(context, -13, -49, 10, brickColor.black, palette.ink);
+      drawStud(context, 13, -49, 10, brickColor.black, palette.ink);
+    } else if (kind === 'chipmunk') {
+      drawStud(context, -10, -47, 7, headColor, palette.ink);
+      drawStud(context, 10, -47, 7, headColor, palette.ink);
+      drawStud(context, -10, -47, 3, '#f3d0a4', palette.ink);
+      drawStud(context, 10, -47, 3, '#f3d0a4', palette.ink);
+    } else if (kind === 'elmo') {
+      context.fillStyle = brickColor.red;
+      context.strokeStyle = palette.ink;
+      context.lineWidth = 2.5;
+      [-12, -7, 0, 7, 12].forEach((fuzzX, index) => {
+        context.beginPath();
+        context.arc(fuzzX, index % 2 ? -42 : -45, 6.8, 0, Math.PI * 2);
+        context.fill();
+        context.stroke();
+      });
+    }
+
+    if (kind === 'duck') {
+      context.fillStyle = brickColor.white;
+      context.strokeStyle = palette.ink;
+      context.lineWidth = 3;
+      context.beginPath();
+      context.ellipse(0, -35, 14.5, 14, 0, 0, Math.PI * 2);
+      context.fill();
+      context.stroke();
+    } else if (kind === 'mouse') {
+      context.fillStyle = brickColor.black;
+      context.strokeStyle = palette.ink;
+      context.lineWidth = 3;
+      context.beginPath();
+      context.arc(0, -35, 15, 0, Math.PI * 2);
+      context.fill();
+      context.stroke();
+    } else {
+      drawBrick(-13, -46, 26, 26, headColor, 1, 7);
+    }
+
+    if (kind === 'blue-pup') {
+      context.fillStyle = brickColor.blue;
+      context.beginPath();
+      context.arc(-6, -39, 6.2, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = brickColor.white;
+      context.beginPath();
+      context.ellipse(-4.5, -37, 3.3, 4.5, 0, 0, Math.PI * 2);
+      context.ellipse(4.5, -37, 3.3, 4.5, 0, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = palette.ink;
+      context.beginPath();
+      context.arc(-4, -36, 1.35, 0, Math.PI * 2);
+      context.arc(5, -36, 1.35, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = palette.surface;
+      roundedRectPath(context, -7, -32, 14, 8, 4);
+      context.fill();
+      context.fillStyle = palette.ink;
+      context.beginPath();
+      context.arc(0, -29.5, 2, 0, Math.PI * 2);
+      context.fill();
+    } else if (kind === 'duck') {
+      // Puffy white head, sailor cap, and an unmistakably broad orange bill.
+      context.fillStyle = brickColor.white;
+      context.beginPath();
+      context.ellipse(-4.5, -39, 4.2, 6.5, -0.08, 0, Math.PI * 2);
+      context.ellipse(4.5, -39, 4.2, 6.5, 0.08, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = palette.ink;
+      context.beginPath();
+      context.ellipse(-4, -38, 1.35, 2.2, 0, 0, Math.PI * 2);
+      context.ellipse(5, -38, 1.35, 2.2, 0, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = brickColor.orange;
+      context.beginPath();
+      context.moveTo(-12, -33);
+      context.quadraticCurveTo(0, -38, 13, -32);
+      context.quadraticCurveTo(12, -23, 0, -24);
+      context.quadraticCurveTo(-12, -24, -12, -33);
+      context.closePath();
+      context.fill();
+      context.strokeStyle = palette.ink;
+      context.lineWidth = 2.5;
+      context.stroke();
+      context.beginPath();
+      context.moveTo(-9, -29);
+      context.quadraticCurveTo(0, -27, 10, -29);
+      context.stroke();
+      context.fillStyle = brickColor.blue;
+      context.beginPath();
+      context.moveTo(-11, -47);
+      context.quadraticCurveTo(0, -56, 11, -47);
+      context.lineTo(10, -43);
+      context.lineTo(-10, -43);
+      context.closePath();
+      context.fill();
+      context.stroke();
+      drawBrick(-13, -45, 27, 5, brickColor.blue, 2, 2);
+      context.fillStyle = palette.ink;
+      context.beginPath();
+      context.arc(-4, -52, 1.2, 0, Math.PI * 2);
+      context.arc(0, -54, 1.2, 0, Math.PI * 2);
+      context.arc(4, -52, 1.2, 0, Math.PI * 2);
+      context.fill();
+    } else if (kind === 'mouse') {
+      // Round ears, peach widow's-peak face, red shorts, gloves, and shoes.
+      context.fillStyle = '#e7ad82';
+      context.beginPath();
+      context.moveTo(0, -46);
+      context.bezierCurveTo(-2, -42, -4, -43, -6, -40);
+      context.bezierCurveTo(-14, -35, -10, -23, 0, -23);
+      context.bezierCurveTo(10, -23, 14, -35, 6, -40);
+      context.bezierCurveTo(4, -43, 2, -42, 0, -46);
+      context.closePath();
+      context.fill();
+      context.fillStyle = brickColor.white;
+      context.beginPath();
+      context.ellipse(-3.1, -37.5, 2.7, 5.3, 0, 0, Math.PI * 2);
+      context.ellipse(3.1, -37.5, 2.7, 5.3, 0, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = palette.ink;
+      context.beginPath();
+      context.ellipse(-2.8, -36.5, 1, 1.8, 0, 0, Math.PI * 2);
+      context.ellipse(3.4, -36.5, 1, 1.8, 0, 0, Math.PI * 2);
+      context.ellipse(0, -29.5, 4.8, 3.5, 0, 0, Math.PI * 2);
+      context.fill();
+      context.strokeStyle = palette.ink;
+      context.lineWidth = 1.7;
+      context.beginPath();
+      context.arc(0, -27.5, 5.8, 0.08 * Math.PI, 0.92 * Math.PI);
+      context.stroke();
+    } else if (kind === 'spider-hero') {
+      context.fillStyle = brickColor.white;
+      context.strokeStyle = palette.ink;
+      context.lineWidth = 2.5;
+      context.beginPath();
+      context.moveTo(-10, -40);
+      context.quadraticCurveTo(-5, -43, -2, -31);
+      context.quadraticCurveTo(-7, -31, -10, -40);
+      context.moveTo(10, -40);
+      context.quadraticCurveTo(5, -43, 2, -31);
+      context.quadraticCurveTo(7, -31, 10, -40);
+      context.fill();
+      context.stroke();
+      context.strokeStyle = palette.ink;
+      context.lineWidth = 1.1;
+      context.globalAlpha = 0.78;
+      context.beginPath();
+      context.moveTo(0, -46);
+      context.lineTo(0, -21);
+      context.moveTo(-12, -34);
+      context.lineTo(12, -34);
+      context.moveTo(-9, -43);
+      context.lineTo(9, -25);
+      context.moveTo(9, -43);
+      context.lineTo(-9, -25);
+      context.stroke();
+      context.globalAlpha = 1;
+    } else if (kind === 'chipmunk') {
+      context.fillStyle = '#f3d0a4';
+      context.beginPath();
+      context.ellipse(0, -34, 9, 10, 0, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = brickColor.white;
+      context.beginPath();
+      context.ellipse(-4.2, -38, 3, 4, 0, 0, Math.PI * 2);
+      context.ellipse(4.2, -38, 3, 4, 0, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = palette.ink;
+      context.beginPath();
+      context.arc(-4, -37, 1.15, 0, Math.PI * 2);
+      context.arc(4.5, -37, 1.15, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = options.variant === 'dale' ? brickColor.red : palette.ink;
+      context.beginPath();
+      context.ellipse(0, -31, options.variant === 'dale' ? 3.1 : 2.2, 2.4, 0, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = brickColor.white;
+      context.fillRect(-2.6, -28.5, 2.1, 3.7);
+      context.fillRect(0.5, -28.5, 2.1, 3.7);
+    } else if (kind === 'elmo') {
+      context.fillStyle = brickColor.white;
+      context.strokeStyle = palette.ink;
+      context.lineWidth = 2.4;
+      context.beginPath();
+      context.arc(-5, -47, 5.5, 0, Math.PI * 2);
+      context.arc(5, -47, 5.5, 0, Math.PI * 2);
+      context.fill();
+      context.stroke();
+      context.fillStyle = palette.ink;
+      context.beginPath();
+      context.arc(-4.4, -46.5, 1.5, 0, Math.PI * 2);
+      context.arc(5.5, -46.5, 1.5, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = brickColor.orange;
+      context.beginPath();
+      context.arc(0, -36, 5.2, 0, Math.PI * 2);
+      context.fill();
+      context.stroke();
+      context.fillStyle = palette.ink;
+      context.beginPath();
+      context.arc(0, -29, 6.5, 0.05 * Math.PI, 0.95 * Math.PI);
+      context.lineTo(-5, -28);
+      context.closePath();
+      context.fill();
+    } else {
+      context.fillStyle = palette.ink;
+      context.beginPath();
+      context.arc(-3.5, -36, 1.5, 0, Math.PI * 2);
+      context.arc(3.5, -36, 1.5, 0, Math.PI * 2);
+      context.fill();
+      context.strokeStyle = palette.ink;
+      context.lineWidth = 1.6;
+      context.beginPath();
+      context.arc(0, -32.5, 4, 0.12 * Math.PI, 0.88 * Math.PI);
+      context.stroke();
+      if (options.hat) drawBrick(-14, -51, 28, 7, options.hat, 2, 2);
     }
     context.restore();
   }
@@ -889,11 +1288,11 @@
     }
     context.restore();
 
-    drawBrick(46, 50, 213, 34, brickColor.aqua, 9, 4);
-    drawBrick(46, 84, 54, 15, brickColor.red, 2, 3);
-    drawBrick(100, 84, 54, 15, brickColor.yellow, 2, 3);
-    drawBrick(154, 84, 54, 15, brickColor.green, 2, 3);
-    drawBrick(208, 84, 51, 15, brickColor.red, 2, 3);
+    drawBrick(46, 50, 213, 38, brickColor.aqua, 9, 5);
+    drawBrick(46, 88, 54, 18, brickColor.red, 2, 3);
+    drawBrick(100, 88, 54, 18, brickColor.yellow, 2, 3);
+    drawBrick(154, 88, 54, 18, brickColor.green, 2, 3);
+    drawBrick(208, 88, 51, 18, brickColor.red, 2, 3);
     for (let index = 0; index < 3; index += 1) {
       drawStud(
         context,
@@ -919,7 +1318,7 @@
     const rewardActive = now < game.goalRewardUntil;
     const rewardAge = Math.max(0, now - game.goalRewardStartedAt);
     const netKick = rewardActive && !reducedMotion
-      ? Math.max(0, 16 * (1 - rewardAge / 900)) * Math.abs(Math.sin(rewardAge / 55))
+      ? Math.max(0, 23 * (1 - rewardAge / 1150)) * Math.abs(Math.sin(rewardAge / 48))
       : 0;
     const netBottom = 151 + netKick;
 
@@ -963,22 +1362,57 @@
     context.stroke();
     context.restore();
 
-    // A deliberately block-built, minifigure-ish keeper (no logos or marks).
-    drawBrick(goal.keeperX - 28, goal.keeperY - 4, 56, 13, brickColor.red, 4, 3);
-    drawBrick(goal.keeperX - 14, goal.keeperY + 7, 28, 28, brickColor.blue, 2, 3);
-    drawBrick(goal.keeperX - 10, goal.keeperY - 26, 20, 22, brickColor.yellow, 1, 4);
-    drawBrick(goal.keeperX - 10, goal.keeperY - 29, 20, 7, brickColor.black, 1, 2);
-    drawBrick(goal.keeperX - 13, goal.keeperY + 34, 12, 16, brickColor.blue, 1, 2);
-    drawBrick(goal.keeperX + 1, goal.keeperY + 34, 12, 16, brickColor.blue, 1, 2);
+    if (rewardActive) {
+      const flash = reducedMotion ? 0.7 : 0.58 + Math.sin(rewardAge / 58) * 0.22;
+      const lampColors = [brickColor.yellow, brickColor.red, brickColor.aqua, brickColor.green];
+      for (let index = 0; index < 9; index += 1) {
+        context.save();
+        context.globalAlpha = Math.max(0.32, flash);
+        const lampX = goal.left + 18 + index * ((goal.right - goal.left - 36) / 8);
+        drawStud(context, lampX, netTop - 16, 5.7, lampColors[index % lampColors.length], palette.ink);
+        context.restore();
+      }
+    }
 
-    context.fillStyle = palette.ink;
-    context.beginPath();
-    context.arc(goal.keeperX - 3.5, goal.keeperY - 16, 1.4, 0, Math.PI * 2);
-    context.arc(goal.keeperX + 3.5, goal.keeperY - 16, 1.4, 0, Math.PI * 2);
-    context.fill();
+    const cheerBounce = rewardActive && !reducedMotion ? Math.sin(rewardAge / 52) * 5 : 0;
+    drawToyFigure(57, 188 + cheerBounce, 0.62, {
+      body: brickColor.red,
+      legs: brickColor.blue,
+      accent: brickColor.yellow,
+      armsUp: rewardActive,
+      hat: brickColor.blue
+    });
+    drawToyFigure(423, 188 - cheerBounce, 0.62, {
+      body: brickColor.aqua,
+      legs: brickColor.green,
+      accent: brickColor.red,
+      armsUp: rewardActive,
+      flip: true,
+      hat: brickColor.red
+    });
 
-    drawStud(context, goal.keeperX - goal.keeperHalfWidth, goal.keeperY + 1, 7, brickColor.yellow);
-    drawStud(context, goal.keeperX + goal.keeperHalfWidth, goal.keeperY + 1, 7, brickColor.yellow);
+    // New Game cycles six deliberately readable block-character tributes.
+    const goalieLook = goalieLooks[game.goalieTheme];
+    if (goalieLook.kind === 'chip-duo') {
+      drawToyFigure(goal.keeperX - 14, goal.keeperY + 13, 0.78, {
+        ...goalieLook,
+        kind: 'chipmunk',
+        variant: 'chip',
+        armsUp: false
+      });
+      drawToyFigure(goal.keeperX + 14, goal.keeperY + 13, 0.78, {
+        ...goalieLook,
+        kind: 'chipmunk',
+        variant: 'dale',
+        armsUp: false,
+        flip: true
+      });
+    } else {
+      drawToyFigure(goal.keeperX, goal.keeperY + 10, goalieLook.kind === 'duck' ? 1.18 : 1.14, {
+        ...goalieLook,
+        armsUp: false
+      });
+    }
     context.restore();
   }
 
@@ -996,66 +1430,20 @@
     ];
     walls.forEach((wall, index) => {
       const railColor = railColors[index % railColors.length];
-      context.strokeStyle = palette.ink;
-      context.lineWidth = 14;
-      context.beginPath();
-      context.moveTo(wall.ax, wall.ay);
-      context.lineTo(wall.bx, wall.by);
-      context.stroke();
-      context.strokeStyle = railColor;
-      context.lineWidth = 8;
-      context.stroke();
-
-      const dx = wall.bx - wall.ax;
-      const dy = wall.by - wall.ay;
-      const length = Math.hypot(dx, dy);
-      const studCount = Math.max(1, Math.floor(length / 28));
-      for (let studIndex = 0; studIndex <= studCount; studIndex += 1) {
-        const amount = studIndex / studCount;
-        drawStud(
-          context,
-          wall.ax + dx * amount,
-          wall.ay + dy * amount,
-          3.8,
-          railColor,
-          palette.ink
-        );
-      }
+      drawBrickBeam(wall, railColor, 20);
     });
 
     slings.forEach((sling) => {
       const hot = performance.now() - sling.lastHit < 150;
-      context.strokeStyle = palette.ink;
-      context.lineWidth = hot ? 16 : 13;
-      context.beginPath();
-      context.moveTo(sling.ax, sling.ay);
-      context.lineTo(sling.bx, sling.by);
-      context.stroke();
-      context.strokeStyle = hot ? brickColor.yellow : brickColor.orange;
-      context.lineWidth = hot ? 10 : 7;
-      context.stroke();
+      drawBrickBeam(sling, hot ? brickColor.yellow : brickColor.orange, hot ? 23 : 20);
     });
-    context.restore();
-  }
 
-  function drawCradleCoach(now) {
-    if (game.state !== 'playing' || game.assistedShot) return;
-    const held = Boolean(game.cradleSide);
-
-    if (held) {
-      const targetX = cradleTargetX(game.cradleSide, now);
-      context.save();
-      context.setLineDash([8, 9]);
-      context.strokeStyle = game.cradleSide === 'left' ? brickColor.red : brickColor.aqua;
-      context.globalAlpha = 0.68;
-      context.lineWidth = 3;
-      context.beginPath();
-      context.moveTo(ball.x, ball.y - ball.radius - 4);
-      context.lineTo(targetX, goal.lineY + 4);
-      context.stroke();
-      context.restore();
+    if (game.launchGateClosed) {
+      launchGates.forEach((gate, index) => {
+        drawBrickBeam(gate, index === 0 ? brickColor.aqua : brickColor.yellow, 17);
+      });
     }
-
+    context.restore();
   }
 
   function drawTargets(now) {
@@ -1117,41 +1505,19 @@
   }
 
   function drawFlipper(flipper, pressed) {
-    const endX = flipper.x + Math.cos(flipper.angle) * flipper.length;
-    const endY = flipper.y + Math.sin(flipper.angle) * flipper.length;
     context.save();
-    context.lineCap = 'round';
-    const cradled = game.cradleSide === flipper.side;
-    if (cradled) {
-      context.shadowColor = flipper.side === 'left' ? brickColor.red : brickColor.aqua;
-      context.shadowBlur = reducedMotion ? 8 : 14 + Math.sin(performance.now() / 90) * 3;
-    }
-    context.strokeStyle = brickColor.black;
-    context.lineWidth = flipper.radius * 2 + 9;
-    context.beginPath();
-    context.moveTo(flipper.x, flipper.y);
-    context.lineTo(endX, endY);
-    context.stroke();
-    context.strokeStyle = pressed
+    context.translate(flipper.x, flipper.y);
+    context.rotate(flipper.angle);
+    const flipperColor = pressed
       ? brickColor.yellow
       : flipper.side === 'left' ? brickColor.red : brickColor.aqua;
-    context.lineWidth = flipper.radius * 2;
-    context.stroke();
-    [0.16, 0.48, 0.8].forEach((amount) => {
-      drawStud(
-        context,
-        flipper.x + (endX - flipper.x) * amount,
-        flipper.y + (endY - flipper.y) * amount,
-        4.5,
-        pressed ? brickColor.yellow : flipper.side === 'left' ? brickColor.red : brickColor.aqua
-      );
-    });
-    drawStud(context, flipper.x, flipper.y, 7, brickColor.yellow);
+    drawBrick(-4, -flipper.radius - 4, flipper.length + 8, flipper.radius * 2 + 8, flipperColor, 4, 7);
+    drawStud(context, 0, 0, 8, brickColor.yellow);
     context.restore();
   }
 
   function drawBall() {
-    if (!ball.active && game.state !== 'ready') return;
+    if (!ball.active && game.state !== 'ready' && game.state !== 'launching') return;
     context.save();
     context.shadowColor = 'rgba(20,25,43,.4)';
     context.shadowBlur = 9;
@@ -1209,58 +1575,65 @@
     });
   }
 
-  function drawGoalReward(now) {
-    if (now >= game.goalRewardUntil) return;
-    const duration = game.goalRewardUntil - game.goalRewardStartedAt;
-    const progress = clamp((now - game.goalRewardStartedAt) / duration, 0, 1);
-    const entrance = clamp(progress / 0.14, 0, 1);
-    const exit = clamp((1 - progress) / 0.2, 0, 1);
-    const alpha = Math.min(entrance, exit);
-    const pulse = reducedMotion ? 1 : 1 + Math.sin(progress * Math.PI * 9) * 0.025;
-
-    context.save();
-    context.globalAlpha = alpha * 0.22;
-    context.fillStyle = brickColor.yellow;
-    context.fillRect(0, 0, WIDTH, HEIGHT);
-    context.restore();
-
-    context.save();
-    context.globalAlpha = alpha;
-    context.translate(WIDTH / 2, 252);
-    context.scale(pulse, pulse);
-    drawBrick(-164, -52, 328, 104, brickColor.yellow, 12, 7);
-    drawBrick(-164, -52, 48, 22, brickColor.red, 2, 4);
-    drawBrick(-116, -52, 48, 22, brickColor.blue, 2, 4);
-    drawBrick(68, -52, 48, 22, brickColor.green, 2, 4);
-    drawBrick(116, -52, 48, 22, brickColor.red, 2, 4);
-    context.fillStyle = brickColor.black;
-    context.strokeStyle = brickColor.white;
-    context.lineWidth = 8;
-    context.textAlign = 'center';
-    context.font = '900 48px Fredoka, system-ui, sans-serif';
-    context.strokeText('GOAL!', 0, 18);
-    context.fillText('GOAL!', 0, 18);
-    context.fillStyle = brickColor.blue;
-    context.font = '800 14px "DM Mono", monospace';
-    context.fillText('+500  SUPER SHOT', 0, 42);
-    context.restore();
+  function launchSpringTop(now) {
+    const restingTop = 542;
+    if (!game.launchStartedAt) return restingTop;
+    const elapsed = now - game.launchStartedAt;
+    if (game.state === 'launching') {
+      if (elapsed < 110) {
+        const progress = clamp(elapsed / 110, 0, 1);
+        return restingTop + 28 * (1 - Math.pow(1 - progress, 3));
+      }
+      const progress = clamp((elapsed - 110) / Math.max(1, LAUNCH_RELEASE_MS - 110), 0, 1);
+      return 570 - 46 * (1 - Math.pow(1 - progress, 3));
+    }
+    if (game.state === 'playing' && elapsed < LAUNCH_SPRING_MS) {
+      const progress = clamp((elapsed - LAUNCH_RELEASE_MS) / Math.max(1, LAUNCH_SPRING_MS - LAUNCH_RELEASE_MS), 0, 1);
+      const settle = reducedMotion ? progress : 1 - Math.exp(-5 * progress) * Math.cos(progress * Math.PI * 4);
+      return 524 + (restingTop - 524) * settle;
+    }
+    return restingTop;
   }
 
-  function drawLaunchPrompt() {
-    if (game.state !== 'ready') return;
+  function drawLauncher(now) {
+    const springTop = launchSpringTop(now);
+    const springBottom = 606;
     context.save();
-    context.translate(430, 508);
-    context.fillStyle = palette.butter;
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
+
+    context.strokeStyle = palette.ink;
+    context.lineWidth = 7;
     context.beginPath();
-    context.moveTo(0, -12);
-    context.lineTo(-7, 1);
-    context.lineTo(-2, 1);
-    context.lineTo(-2, 16);
-    context.lineTo(2, 16);
-    context.lineTo(2, 1);
-    context.lineTo(7, 1);
-    context.closePath();
-    context.fill();
+    context.moveTo(430, springTop + 8);
+    const turns = 12;
+    for (let index = 1; index < turns; index += 1) {
+      const amount = index / turns;
+      context.lineTo(index % 2 ? 420 : 440, springTop + 8 + (springBottom - springTop - 16) * amount);
+    }
+    context.lineTo(430, springBottom - 8);
+    context.stroke();
+    context.strokeStyle = brickColor.aqua;
+    context.lineWidth = 3.5;
+    context.stroke();
+
+    drawBrick(413, springTop, 34, 11, brickColor.yellow, 2, 3);
+    drawBrick(414, springBottom - 7, 32, 13, brickColor.red, 2, 3);
+
+    if (game.state === 'ready') {
+      context.translate(430, 505);
+      context.fillStyle = palette.butter;
+      context.beginPath();
+      context.moveTo(0, -10);
+      context.lineTo(-7, 2);
+      context.lineTo(-2, 2);
+      context.lineTo(-2, 15);
+      context.lineTo(2, 15);
+      context.lineTo(2, 2);
+      context.lineTo(7, 2);
+      context.closePath();
+      context.fill();
+    }
     context.restore();
   }
 
@@ -1293,13 +1666,11 @@
     drawTargets(now);
     drawBumpers(now, now / 1000);
     drawWalls();
-    drawCradleCoach(now);
     drawFlipper(flippers[0], leftDown());
     drawFlipper(flippers[1], rightDown());
-    drawLaunchPrompt();
+    drawLauncher(now);
     drawBall();
     drawEffects();
-    drawGoalReward(now);
     drawGameOver();
     syncDebugState(now);
   }

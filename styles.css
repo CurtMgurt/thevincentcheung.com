@@ -1432,6 +1432,7 @@ h1 span {
 }
 
 .pinball-scoreboard {
+  position: relative;
   width: min(285px, 100%);
   margin-bottom: 18px;
   padding: 16px 18px;
@@ -1442,6 +1443,39 @@ h1 span {
   font: 500 10px "DM Mono", ui-monospace, Consolas, monospace;
   letter-spacing: .08em;
   text-transform: uppercase;
+  transform-origin: left center;
+}
+
+.pinball-scoreboard.goal-pop {
+  animation: scoreboard-goal 1.18s cubic-bezier(.2, .9, .25, 1);
+}
+
+.pinball-scoreboard.goal-pop #pinball-status {
+  color: var(--ink);
+}
+
+.pinball-goal-badge {
+  position: absolute;
+  z-index: 4;
+  top: -29px;
+  right: -16px;
+  padding: 8px 11px;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  color: var(--ink);
+  background: var(--red);
+  box-shadow: 4px 4px 0 var(--butter);
+  font: 800 11px "DM Mono", ui-monospace, Consolas, monospace;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px) scale(.35) rotate(9deg);
+  transform-origin: 75% 100%;
+}
+
+.pinball-scoreboard.goal-pop .pinball-goal-badge {
+  animation: goal-badge 1.18s cubic-bezier(.18, 1.35, .3, 1) both;
 }
 
 .pinball-scoreboard p {
@@ -1478,13 +1512,23 @@ h1 span {
 }
 
 .pinball-reset {
-  padding: 9px 13px;
-  border-color: rgba(49, 54, 56, .38);
-  background: transparent;
+  min-height: 46px;
+  padding: 11px 20px;
+  border-width: 3px;
+  border-color: var(--ink);
+  color: var(--ink);
+  background: var(--butter);
+  box-shadow: 0 5px 0 var(--ink);
+  font-size: 10px;
 }
 
 .pinball-reset:hover,
 .pinball-controls button:hover { transform: translateY(-2px); }
+
+.pinball-reset:active {
+  box-shadow: 0 1px 0 var(--ink);
+  transform: translateY(4px);
+}
 
 .pinball-machine {
   width: min(520px, 100%);
@@ -1639,6 +1683,34 @@ footer p { margin: 0; }
   100% { opacity: 0; transform: translate(-50%, -8px) scale(.92) rotate(2deg); }
 }
 
+@keyframes scoreboard-goal {
+  0%, 100% {
+    color: var(--white);
+    background: var(--ink);
+    box-shadow: 6px 6px 0 var(--butter);
+    transform: scale(1);
+  }
+  20% {
+    color: var(--ink);
+    background: var(--butter);
+    box-shadow: 10px 10px 0 var(--sky);
+    transform: scale(1.065) rotate(-1.5deg);
+  }
+  48% {
+    color: var(--ink);
+    background: var(--butter);
+    box-shadow: 8px 8px 0 var(--red);
+    transform: scale(1.025) rotate(.8deg);
+  }
+}
+
+@keyframes goal-badge {
+  0% { opacity: 0; transform: translateY(8px) scale(.35) rotate(9deg); }
+  18% { opacity: 1; transform: translateY(0) scale(1.18) rotate(-5deg); }
+  38%, 76% { opacity: 1; transform: translateY(0) scale(1) rotate(2deg); }
+  100% { opacity: 0; transform: translateY(-12px) scale(.88) rotate(-2deg); }
+}
+
 @media (max-width: 760px) {
   .site-header { height: 68px; }
 
@@ -1770,7 +1842,10 @@ footer p { margin: 0; }
 
   .pinball-copy h2 { margin-bottom: 28px; }
 
-  .pinball-scoreboard { margin-inline: auto; }
+  .pinball-scoreboard {
+    margin-inline: auto;
+    transform-origin: center;
+  }
 
   .pinball-machine { width: min(460px, 100%); }
 }
