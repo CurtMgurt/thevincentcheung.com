@@ -3,85 +3,126 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#10153d" />
+    <meta name="theme-color" content="#fbf8ef" />
     <meta name="description" content="Vincent's little corner of the internet." />
     <title>Vincent's Little Corner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=20260823-even-bigger" />
   </head>
   <body>
-    <div class="sky" aria-hidden="true"></div>
+    <div class="page-texture" aria-hidden="true"></div>
     <header class="site-header">
-      <a class="logo" href="#top" aria-label="Home"><span>V</span><em>★</em></a>
-      <button class="sound-toggle" type="button" aria-pressed="false">sound: off</button>
+      <button class="sound-toggle" type="button" aria-pressed="true">sound: on</button>
     </header>
 
     <main id="top">
       <section class="hero">
+        <div class="web-decoration web-top" aria-hidden="true"></div>
+        <div class="web-decoration web-bottom" aria-hidden="true"></div>
         <div class="hero-copy">
-          <p class="eyebrow">TRANSMISSION FROM PLANET EARTH</p>
-          <h1>Hi, I'm<br /><span>Vincent!</span></h1>
-          <p class="intro">This is my little corner of the internet. It's still growing—just like me.</p>
-          <a class="button" href="#explore">Start exploring <span>↓</span></a>
+          <h1>Hi, I'm<br /><span>Vincent.</span></h1>
         </div>
 
-        <div class="orbit-scene" aria-label="A friendly planet floating in space">
-          <div class="orbit orbit-one"><span class="tiny-moon"></span></div>
-          <div class="orbit orbit-two"><span class="satellite">★</span></div>
-          <button class="planet" type="button" aria-label="Poke the planet">
-            <span class="planet-face"><i></i><i></i><b></b></span>
-            <span class="planet-ring"></span>
-          </button>
-          <p class="poke">psst... poke the planet</p>
-        </div>
-      </section>
-
-      <section class="explore" id="explore">
-        <div class="section-heading">
-          <p class="eyebrow">CURRENTLY IN ORBIT</p>
-          <h2>A few important things</h2>
-        </div>
-
-        <div class="cards">
-          <article class="card card-yellow">
-            <span class="card-number">01</span>
-            <div class="card-icon rocket">↗</div>
-            <h3>Big adventures</h3>
-            <p>There are a lot of places to go, things to build, and questions to ask.</p>
-          </article>
-          <article class="card card-pink">
-            <span class="card-number">02</span>
-            <div class="card-icon heart">♥</div>
-            <h3>Good people</h3>
-            <p>This planet is much nicer with family, friends, and lots of laughs.</p>
-          </article>
-          <article class="card card-blue">
-            <span class="card-number">03</span>
-            <div class="card-icon spark">✦</div>
-            <h3>Infinite possibility</h3>
-            <p>No one knows what comes next. That's the best part.</p>
-          </article>
+        <div class="orbit-scene" aria-label="Vincent in a masked hood at a café">
+          <div class="photo-stage">
+            <button class="photo-card planet" type="button" aria-label="Make Vincent's photo pop">
+            <img src="assets/vincent-spiderman-sanitized.png" alt="Vincent in a red masked hood, leaning on a café table" width="1448" height="1086" decoding="async" fetchpriority="high" />
+              <span class="photo-label">secret identity: classified</span>
+            </button>
+            <div class="spider-launcher">
+              <button class="web-button" type="button" aria-label="Help the tiny spider shoot a web" aria-busy="false">
+                <span class="button-web" aria-hidden="true"></span>
+                <span class="button-spider" aria-hidden="true">
+                  <i class="spider-leg leg-one"></i><i class="spider-leg leg-two"></i><i class="spider-leg leg-three"></i><i class="spider-leg leg-four"></i>
+                  <i class="spider-leg leg-five"></i><i class="spider-leg leg-six"></i><i class="spider-leg leg-seven"></i><i class="spider-leg leg-eight"></i>
+                  <span class="spider-face"><i></i><i></i></span>
+                </span>
+                <span class="spider-pop" aria-hidden="true">thwip!</span>
+              </button>
+            </div>
+          </div>
+          <p class="poke">tap the hero for a picture pop</p>
         </div>
       </section>
 
-      <section class="capsule">
-        <div class="capsule-stamp" aria-hidden="true">V<br /><span>∞</span></div>
-        <div>
-          <p class="eyebrow">A NOTE FOR FUTURE VINCENT</p>
-          <blockquote id="future-note">“Stay curious. Be kind. Call your parents.”</blockquote>
-          <button class="shuffle-note" type="button">show me another note <span>↻</span></button>
+      <section class="planet-band" id="solar-system" aria-labelledby="solar-title">
+        <div class="planet-playmat" aria-hidden="true">
+          <span class="playmat-orbit playmat-orbit-one"></span>
+          <span class="playmat-orbit playmat-orbit-two"></span>
+          <span class="playmat-ringed"></span>
+          <span class="playmat-crescent"></span>
+          <span class="playmat-comet"></span>
+          <span class="playmat-star playmat-star-one"></span>
+          <span class="playmat-star playmat-star-two"></span>
+          <span class="playmat-star playmat-star-three"></span>
+          <span class="playmat-star playmat-star-four"></span>
+          <span class="playmat-star playmat-star-five"></span>
+        </div>
+        <div class="solar-map-heading">
+          <p class="solar-kicker">tap a world &mdash; hear its name</p>
+          <h2 id="solar-title">Our solar<br /><span>system.</span></h2>
+          <p class="solar-scale">all together &middot; not to scale</p>
+        </div>
+
+        <div class="solar-map-window" role="group" aria-label="The Sun, planets, and dwarf planets arranged in outward order">
+          <div class="solar-map">
+              <svg class="solar-route solar-route-wide" viewBox="0 0 1000 570" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M100 92 H900 C948 92 948 284 900 284 H100 C52 284 52 478 100 478 H700" />
+              </svg>
+              <svg class="solar-route solar-route-compact" viewBox="0 0 300 710" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M50 68 H250 C282 68 282 211 250 211 H50 C18 211 18 354 50 354 H250 C282 354 282 497 250 497 H50 C18 497 18 640 50 640 H150" />
+              </svg>
+
+              <button class="mini-planet sun" type="button" data-planet="Sun" data-note="247" aria-label="Hear Sun say its name. The Sun is our star."><span class="planet-system" aria-hidden="true"><span class="planet-orb"></span></span><span>Sun</span></button>
+              <button class="mini-planet mercury" type="button" data-planet="Mercury" data-note="262" aria-label="Hear Mercury say its name. Mercury has no moons."><span class="planet-system" aria-hidden="true"><span class="planet-orb"></span></span><span>Mercury</span></button>
+              <button class="mini-planet venus" type="button" data-planet="Venus" data-note="294" aria-label="Hear Venus say its name. Venus has no moons."><span class="planet-system" aria-hidden="true"><span class="planet-orb"></span></span><span>Venus</span></button>
+              <button class="mini-planet earth" type="button" data-planet="Earth" data-note="330" aria-label="Hear Earth say its name. The Moon is orbiting Earth." title="Moon"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-2"><i class="moon-dot moon-silver"></i></span><span class="planet-orb"></span></span><span>Earth</span></button>
+              <button class="mini-planet mars" type="button" data-planet="Mars" data-note="349" aria-label="Hear Mars say its name. Phobos and Deimos are orbiting Mars." title="Phobos &middot; Deimos"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-1 fast"><i class="moon-dot moon-dark"></i></span><span class="moon-track orbit-4 slow"><i class="moon-dot moon-silver"></i></span><span class="planet-orb"></span></span><span>Mars</span></button>
+              <button class="mini-planet ceres" type="button" data-planet="Ceres" data-note="554" aria-label="Hear Ceres say its name. Ceres is a dwarf planet in the asteroid belt and has no moons."><span class="planet-system" aria-hidden="true"><span class="planet-orb"></span></span><span>Ceres</span></button>
+              <button class="mini-planet jupiter" type="button" data-planet="Jupiter" data-note="392" aria-label="Hear Jupiter say its name. Four featured Galilean moons are shown: Io, Europa, Ganymede, and Callisto." title="Featured moons: Io &middot; Europa &middot; Ganymede &middot; Callisto"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-1 fast"><i class="moon-dot moon-gold"></i></span><span class="moon-track orbit-2"><i class="moon-dot moon-cream"></i></span><span class="moon-track orbit-4 slow"><i class="moon-dot moon-silver moon-large"></i></span><span class="moon-track orbit-6 slower"><i class="moon-dot moon-dark"></i></span><span class="planet-orb"></span></span><span>Jupiter</span></button>
+              <button class="mini-planet saturn" type="button" data-planet="Saturn" data-note="440" aria-label="Hear Saturn say its name. Seven featured moons are shown: Mimas, Enceladus, Tethys, Dione, Rhea, Titan, and Iapetus." title="Featured moons: Mimas &middot; Enceladus &middot; Tethys &middot; Dione &middot; Rhea &middot; Titan &middot; Iapetus"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-1 fast"><i class="moon-dot moon-silver"></i></span><span class="moon-track orbit-2"><i class="moon-dot moon-cream"></i></span><span class="moon-track orbit-3"><i class="moon-dot moon-silver"></i></span><span class="moon-track orbit-4 slow"><i class="moon-dot moon-dark"></i></span><span class="moon-track orbit-5 slow"><i class="moon-dot moon-silver moon-large"></i></span><span class="moon-track orbit-6 slower"><i class="moon-dot moon-gold moon-large"></i></span><span class="moon-track orbit-7 slower"><i class="moon-dot moon-dark"></i></span><span class="planet-orb"><i class="planet-ring"></i></span></span><span>Saturn</span></button>
+              <button class="mini-planet uranus" type="button" data-planet="Uranus" data-note="494" aria-label="Hear Uranus say its name. Five major moons are shown: Miranda, Ariel, Umbriel, Titania, and Oberon." title="Major moons: Miranda &middot; Ariel &middot; Umbriel &middot; Titania &middot; Oberon"><span class="planet-system moon-plane-sideways" aria-hidden="true"><span class="moon-track orbit-1 fast"><i class="moon-dot moon-silver"></i></span><span class="moon-track orbit-2"><i class="moon-dot moon-cream"></i></span><span class="moon-track orbit-3 slow"><i class="moon-dot moon-dark"></i></span><span class="moon-track orbit-5 slow"><i class="moon-dot moon-silver moon-large"></i></span><span class="moon-track orbit-7 slower"><i class="moon-dot moon-dark"></i></span><span class="planet-orb"></span></span><span>Uranus</span></button>
+              <button class="mini-planet neptune" type="button" data-planet="Neptune" data-note="523" aria-label="Hear Neptune say its name. Featured moon Triton is shown orbiting backward." title="Featured moon: Triton (retrograde orbit)"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-5 retrograde"><i class="moon-dot moon-silver moon-large"></i></span><span class="planet-orb"></span></span><span>Neptune</span></button>
+              <button class="mini-planet pluto" type="button" data-planet="Pluto" data-note="587" aria-label="Hear Pluto say its name. Charon, Styx, Nix, Kerberos, and Hydra are orbiting Pluto." title="Charon &middot; Styx &middot; Nix &middot; Kerberos &middot; Hydra"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-2 fast"><i class="moon-dot moon-cream moon-charon"></i></span><span class="moon-track orbit-4"><i class="moon-dot moon-silver"></i></span><span class="moon-track orbit-5 slow"><i class="moon-dot moon-dark"></i></span><span class="moon-track orbit-6 slow"><i class="moon-dot moon-silver"></i></span><span class="moon-track orbit-7 slower"><i class="moon-dot moon-cream"></i></span><span class="planet-orb"></span></span><span>Pluto</span></button>
+              <button class="mini-planet haumea" type="button" data-planet="Haumea" data-note="622" aria-label="Hear Haumea say its name. Namaka and Hiʻiaka are orbiting Haumea." title="Namaka &middot; Hi&#x02BB;iaka"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-2 fast"><i class="moon-dot moon-silver"></i></span><span class="moon-track orbit-6 slow"><i class="moon-dot moon-cream moon-large"></i></span><span class="planet-orb"><i class="dwarf-ring"></i></span></span><span>Haumea</span></button>
+              <button class="mini-planet makemake" type="button" data-planet="Makemake" data-note="659" aria-label="Hear Makemake say its name. Its provisional moon MK 2 is orbiting." title="Provisional moon: MK 2"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-5 slow"><i class="moon-dot moon-dark"></i></span><span class="planet-orb"></span></span><span>Makemake</span></button>
+              <button class="mini-planet eris" type="button" data-planet="Eris" data-note="698" aria-label="Hear Eris say its name. Dysnomia is orbiting Eris." title="Dysnomia"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-5 slower"><i class="moon-dot moon-silver"></i></span><span class="planet-orb"></span></span><span>Eris</span></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="pinball-zone" id="pinball" aria-labelledby="pinball-title">
+        <div class="brick-playmat" aria-hidden="true">
+          <span class="playmat-brick playmat-brick-one"></span>
+          <span class="playmat-brick playmat-brick-two"></span>
+          <span class="playmat-brick playmat-brick-three"></span>
+          <span class="playmat-brick playmat-brick-four"></span>
+        </div>
+        <div class="pinball-copy">
+          <h2 id="pinball-title">Brick<br /><span>ball.</span></h2>
+          <div class="pinball-scoreboard" aria-live="polite">
+            <p>SCORE <strong id="pinball-score">0000</strong></p>
+            <p id="pinball-status">ready</p>
+          </div>
+          <button class="pinball-reset" type="button">reset game</button>
+        </div>
+
+        <div class="pinball-machine">
+          <canvas id="pinball-canvas" width="480" height="640" aria-label="A small playable Brickball game"></canvas>
+          <div class="pinball-controls" aria-label="Brickball controls">
+            <button class="pinball-left" type="button" aria-label="Left flipper">&#9664; left</button>
+            <button class="pinball-launch" type="button">launch</button>
+            <button class="pinball-right" type="button" aria-label="Right flipper">right &#9654;</button>
+          </div>
         </div>
       </section>
     </main>
 
-    <footer>
-      <p>Made with <span>♥</span> on Planet Earth</p>
-      <p>© <span id="year"></span> THEVINCENTCHEUNG.COM</p>
-    </footer>
-
+    <footer><p>&copy; <span id="year"></span> THEVINCENTCHEUNG.COM</p></footer>
     <div class="toast" role="status" aria-live="polite"></div>
-    <script src="script.js"></script>
+    <script src="script.js?v=20260823-single-web"></script>
+    <script src="pinball.js?v=20260823-clean-copy"></script>
   </body>
 </html>

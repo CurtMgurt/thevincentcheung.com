@@ -1,0 +1,10 @@
+# Local image sources and unused experiments (the public site uses the sanitized crop).
+assets/vincent-spiderman.jpg
+assets/masked-web-hero.png
+
+# The live site uses the smaller neural MP3 clips.
+assets/planet-voices/*.wav
+
+# Local script caches.
+__pycache__/
+*.py[cod]
