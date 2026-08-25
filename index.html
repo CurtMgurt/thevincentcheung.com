@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=20260823-even-bigger" />
+    <link rel="stylesheet" href="styles.css?v=20260824-vincent-facts" />
   </head>
   <body>
     <div class="page-texture" aria-hidden="true"></div>
@@ -119,11 +119,179 @@
           </div>
         </div>
       </section>
+
+      <section class="card-zone" id="vincent-cards" aria-labelledby="card-zone-title">
+        <div class="card-zone-pattern" aria-hidden="true">
+          <span class="card-doodle card-doodle-bolt"></span>
+          <span class="card-doodle card-doodle-leaf"></span>
+          <span class="card-doodle card-doodle-star card-doodle-star-one"></span>
+          <span class="card-doodle card-doodle-star card-doodle-star-two"></span>
+          <span class="card-doodle card-doodle-spark"></span>
+        </div>
+
+        <header class="card-zone-heading">
+          <div>
+            <p class="card-kicker">pick a card</p>
+            <h2 id="card-zone-title">Vincent's<br /><span>deck.</span></h2>
+          </div>
+          <div class="deck-controls">
+            <p class="deck-status" aria-live="polite"><strong id="cards-showing">0</strong> / 9 showing</p>
+            <button class="deck-shuffle" type="button">shuffle</button>
+          </div>
+        </header>
+
+        <div class="card-deck is-dealing" role="group" aria-label="Nine cards that reveal fun facts about Vincent">
+          <button class="fact-card card-electric" type="button" data-card-name="Pikachu" style="--deal-index: 0" aria-pressed="false" aria-label="Flip Pikachu card to reveal a Vincent fact">
+            <span class="card-flipper">
+              <span class="card-face card-front">
+                <span class="card-topline"><strong>Pikachu</strong><i aria-hidden="true">&#9889;</i></span>
+                <span class="card-art"><img src="assets/pokemon/pikachu.png" alt="" loading="lazy" decoding="async" /></span>
+                <span class="card-foot"><span>electric</span><b aria-hidden="true">V&#9733;</b></span>
+              </span>
+              <span class="card-face card-back">
+                <span class="fact-number">fact 01</span>
+                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <strong>Vincent knows all five dwarf planets.</strong>
+                <span class="flip-back">tap to flip back</span>
+              </span>
+            </span>
+          </button>
+
+          <button class="fact-card card-grass" type="button" data-card-name="Bulbasaur" style="--deal-index: 1" aria-pressed="false" aria-label="Flip Bulbasaur card to reveal a Vincent fact">
+            <span class="card-flipper">
+              <span class="card-face card-front">
+                <span class="card-topline"><strong>Bulbasaur</strong><i aria-hidden="true">&#9752;</i></span>
+                <span class="card-art"><img src="assets/pokemon/bulbasaur.png" alt="" loading="lazy" decoding="async" /></span>
+                <span class="card-foot"><span>grass</span><b aria-hidden="true">V&#9733;</b></span>
+              </span>
+              <span class="card-face card-back">
+                <span class="fact-number">fact 02</span>
+                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <strong>Expert LEGO BrickHeadz builder.</strong>
+                <span class="flip-back">tap to flip back</span>
+              </span>
+            </span>
+          </button>
+
+          <button class="fact-card card-fire" type="button" data-card-name="Charmander" style="--deal-index: 2" aria-pressed="false" aria-label="Flip Charmander card to reveal a Vincent fact">
+            <span class="card-flipper">
+              <span class="card-face card-front">
+                <span class="card-topline"><strong>Charmander</strong><i aria-hidden="true">&#9670;</i></span>
+                <span class="card-art"><img src="assets/pokemon/charmander.png" alt="" loading="lazy" decoding="async" /></span>
+                <span class="card-foot"><span>fire</span><b aria-hidden="true">V&#9733;</b></span>
+              </span>
+              <span class="card-face card-back">
+                <span class="fact-number">fact 03</span>
+                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <strong>His favorite color is red.</strong>
+                <span class="flip-back">tap to flip back</span>
+              </span>
+            </span>
+          </button>
+
+          <button class="fact-card card-water" type="button" data-card-name="Squirtle" style="--deal-index: 3" aria-pressed="false" aria-label="Flip Squirtle card to reveal a Vincent fact">
+            <span class="card-flipper">
+              <span class="card-face card-front">
+                <span class="card-topline"><strong>Squirtle</strong><i aria-hidden="true">&#9679;</i></span>
+                <span class="card-art"><img src="assets/pokemon/squirtle.png" alt="" loading="lazy" decoding="async" /></span>
+                <span class="card-foot"><span>water</span><b aria-hidden="true">V&#9733;</b></span>
+              </span>
+              <span class="card-face card-back">
+                <span class="fact-number">fact 04</span>
+                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <strong>He loves pinball and mini golf with Daddy.</strong>
+                <span class="flip-back">tap to flip back</span>
+              </span>
+            </span>
+          </button>
+
+          <button class="fact-card card-eevee" type="button" data-card-name="Eevee" style="--deal-index: 4" aria-pressed="false" aria-label="Flip Eevee card to reveal a Vincent fact">
+            <span class="card-flipper">
+              <span class="card-face card-front">
+                <span class="card-topline"><strong>Eevee</strong><i aria-hidden="true">&#10022;</i></span>
+                <span class="card-art"><img src="assets/pokemon/eevee.png" alt="" loading="lazy" decoding="async" /></span>
+                <span class="card-foot"><span>normal</span><b aria-hidden="true">V&#9733;</b></span>
+              </span>
+              <span class="card-face card-back">
+                <span class="fact-number">fact 05</span>
+                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <strong>His favorite bike seat is right up front with Daddy.</strong>
+                <span class="flip-back">tap to flip back</span>
+              </span>
+            </span>
+          </button>
+
+          <button class="fact-card card-sleepy" type="button" data-card-name="Snorlax" style="--deal-index: 5" aria-pressed="false" aria-label="Flip Snorlax card to reveal a Vincent fact">
+            <span class="card-flipper">
+              <span class="card-face card-front">
+                <span class="card-topline"><strong>Snorlax</strong><i aria-hidden="true">Zz</i></span>
+                <span class="card-art"><img src="assets/pokemon/snorlax.png" alt="" loading="lazy" decoding="async" /></span>
+                <span class="card-foot"><span>normal</span><b aria-hidden="true">V&#9733;</b></span>
+              </span>
+              <span class="card-face card-back">
+                <span class="fact-number">fact 06</span>
+                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <strong>Working on becoming an iron-powered snack champion.</strong>
+                <span class="flip-back">tap to flip back</span>
+              </span>
+            </span>
+          </button>
+
+          <button class="fact-card card-psyduck" type="button" data-card-name="Psyduck" style="--deal-index: 6" aria-pressed="false" aria-label="Flip Psyduck card to reveal a Vincent fact">
+            <span class="card-flipper">
+              <span class="card-face card-front">
+                <span class="card-topline"><strong>Psyduck</strong><i aria-hidden="true">?</i></span>
+                <span class="card-art"><img src="assets/pokemon/psyduck.png" alt="" loading="lazy" decoding="async" /></span>
+                <span class="card-foot"><span>water</span><b aria-hidden="true">V&#9733;</b></span>
+              </span>
+              <span class="card-face card-back">
+                <span class="fact-number">fact 07</span>
+                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <strong>He reads comics—mostly the pictures. Words are next.</strong>
+                <span class="flip-back">tap to flip back</span>
+              </span>
+            </span>
+          </button>
+
+          <button class="fact-card card-ghost" type="button" data-card-name="Gengar" style="--deal-index: 7" aria-pressed="false" aria-label="Flip Gengar card to reveal a Vincent fact">
+            <span class="card-flipper">
+              <span class="card-face card-front">
+                <span class="card-topline"><strong>Gengar</strong><i aria-hidden="true">&#9789;</i></span>
+                <span class="card-art"><img src="assets/pokemon/gengar.png" alt="" loading="lazy" decoding="async" /></span>
+                <span class="card-foot"><span>ghost</span><b aria-hidden="true">V&#9733;</b></span>
+              </span>
+              <span class="card-face card-back">
+                <span class="fact-number">fact 08</span>
+                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <strong>He can buckle his car-seat belt all by himself.</strong>
+                <span class="flip-back">tap to flip back</span>
+              </span>
+            </span>
+          </button>
+
+          <button class="fact-card card-fairy" type="button" data-card-name="Jigglypuff" style="--deal-index: 8" aria-pressed="false" aria-label="Flip Jigglypuff card to reveal a Vincent fact">
+            <span class="card-flipper">
+              <span class="card-face card-front">
+                <span class="card-topline"><strong>Jigglypuff</strong><i aria-hidden="true">&#9834;</i></span>
+                <span class="card-art"><img src="assets/pokemon/jigglypuff.png" alt="" loading="lazy" decoding="async" /></span>
+                <span class="card-foot"><span>fairy</span><b aria-hidden="true">V&#9733;</b></span>
+              </span>
+              <span class="card-face card-back">
+                <span class="fact-number">fact 09</span>
+                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <strong>He knows several KPop Demon Hunters songs by heart.</strong>
+                <span class="flip-back">tap to flip back</span>
+              </span>
+            </span>
+          </button>
+        </div>
+      </section>
     </main>
 
     <footer><p>&copy; <span id="year"></span> THEVINCENTCHEUNG.COM</p></footer>
     <div class="toast" role="status" aria-live="polite"></div>
     <script src="script.js?v=20260823-single-web"></script>
     <script src="pinball.js?v=20260824-character-heads-v3"></script>
+    <script src="cards.js?v=20260824-pokemon-facts"></script>
   </body>
 </html>
