@@ -61,6 +61,8 @@
     surface: palette.surface,
     black: palette.ink
   };
+  const duckOrange = '#e5a33d';
+  const sailorBlue = '#5573a8';
 
   const goalieLooks = [
     {
@@ -74,7 +76,7 @@
       label: 'Donald',
       kind: 'duck',
       body: brickColor.blue,
-      legs: brickColor.orange,
+      legs: duckOrange,
       accent: brickColor.red,
       hands: brickColor.white
     },
@@ -135,6 +137,7 @@
     goalArmed: true,
     goalRewardStartedAt: 0,
     goalRewardUntil: 0,
+    goalReactionDirection: 1,
     flipperHits: 0,
     goals: 0,
     goalieTheme: -1,
@@ -184,8 +187,8 @@
   ];
 
   const bumpers = [
-    { x: 139, y: 178, radius: 31, color: brickColor.aqua, points: 100, label: '+100', lastHit: -1000 },
-    { x: 319, y: 195, radius: 34, color: brickColor.yellow, points: 100, label: '+100', lastHit: -1000 }
+    { x: 110, y: 248, radius: 29, color: brickColor.aqua, points: 100, label: '+100', lastHit: -1000 },
+    { x: 358, y: 248, radius: 29, color: brickColor.yellow, points: 100, label: '+100', lastHit: -1000 }
   ];
 
   const blockTargets = [
@@ -318,6 +321,7 @@
     game.goalArmed = true;
     game.goalRewardStartedAt = 0;
     game.goalRewardUntil = 0;
+    game.goalReactionDirection = 1;
     game.flipperHits = 0;
     game.goals = 0;
     parkBall();
@@ -576,6 +580,7 @@
   function startGoalReward(x, now) {
     game.goalRewardStartedAt = now;
     game.goalRewardUntil = now + 1500;
+    game.goalReactionDirection = x < goal.keeperX ? -1 : 1;
     studConfetti(x, goal.lineY);
     if (scoreboard) {
       scoreboard.classList.remove('goal-pop');
@@ -932,6 +937,143 @@
     context.restore();
   }
 
+  function drawDonaldHead() {
+    const featherWhite = '#fffdf8';
+
+    // A big uninterrupted white head is more important than tiny feather detail
+    // at this scale. The heavy outline keeps it separate from the white net.
+    context.fillStyle = featherWhite;
+    context.strokeStyle = palette.ink;
+    context.lineWidth = 2.2;
+    context.beginPath();
+    context.ellipse(0, -35, 18, 17, 0, 0, Math.PI * 2);
+    context.fill();
+    context.stroke();
+
+    // Feather tufts sit outside the main oval instead of competing with it.
+    context.fillStyle = featherWhite;
+    context.beginPath();
+    context.moveTo(-7, -49);
+    context.lineTo(-7, -58);
+    context.lineTo(-1, -52);
+    context.lineTo(2, -59);
+    context.lineTo(7, -50);
+    context.closePath();
+    context.fill();
+    context.stroke();
+
+    // Smaller sailor cap: enough to identify him without hiding the face.
+    context.fillStyle = sailorBlue;
+    context.beginPath();
+    context.moveTo(-9, -50);
+    context.quadraticCurveTo(-4, -57, 3, -56);
+    context.quadraticCurveTo(10, -55, 10, -48);
+    context.lineTo(6, -46);
+    context.lineTo(-7, -46);
+    context.closePath();
+    context.fill();
+    context.stroke();
+    context.fillStyle = sailorBlue;
+    roundedRectPath(context, -11, -48, 23, 4.5, 2.2);
+    context.fill();
+    context.stroke();
+
+    // Large separated eyes leave generous white cheek space around them.
+    context.fillStyle = featherWhite;
+    context.lineWidth = 1.05;
+    context.beginPath();
+    context.ellipse(-4.6, -39, 4.1, 6.2, -0.05, 0, Math.PI * 2);
+    context.ellipse(4.6, -39, 4.1, 6.2, 0.05, 0, Math.PI * 2);
+    context.fill();
+    context.stroke();
+    context.fillStyle = palette.ink;
+    context.beginPath();
+    context.ellipse(-3.9, -38, 1.35, 2.4, 0, 0, Math.PI * 2);
+    context.ellipse(5.2, -38, 1.35, 2.4, 0, 0, Math.PI * 2);
+    context.fill();
+
+    // A lower, brighter bill exposes the white face instead of masking it.
+    context.fillStyle = duckOrange;
+    context.strokeStyle = palette.ink;
+    context.lineWidth = 2.4;
+    context.beginPath();
+    context.moveTo(-17, -31);
+    context.quadraticCurveTo(-7, -34, 0, -31.5);
+    context.quadraticCurveTo(8, -34, 17, -29.5);
+    context.quadraticCurveTo(14, -22, 2, -22);
+    context.quadraticCurveTo(-11, -21, -17, -26);
+    context.closePath();
+    context.fill();
+    context.stroke();
+    context.lineWidth = 1.8;
+    context.beginPath();
+    context.moveTo(-13, -26.5);
+    context.quadraticCurveTo(0, -24, 13, -26.5);
+    context.stroke();
+  }
+
+  function drawMickeyHead() {
+    const faceColor = '#f2c19c';
+
+    // The classic three-circle silhouette does most of the likeness work.
+    context.fillStyle = brickColor.black;
+    context.strokeStyle = palette.ink;
+    context.lineWidth = 3;
+    context.beginPath();
+    context.arc(-15, -49, 9.8, 0, Math.PI * 2);
+    context.arc(15, -49, 9.8, 0, Math.PI * 2);
+    context.fill();
+    context.stroke();
+    context.beginPath();
+    context.arc(0, -36, 17, 0, Math.PI * 2);
+    context.fill();
+    context.stroke();
+
+    // Peach widow's-peak face plus a separate muzzle keeps it from reading as
+    // a generic monkey/beard shape.
+    context.fillStyle = faceColor;
+    context.beginPath();
+    context.moveTo(0, -49);
+    context.bezierCurveTo(-2, -44, -5, -45, -8, -41);
+    context.bezierCurveTo(-15, -35, -13, -24, -6, -20);
+    context.quadraticCurveTo(0, -17, 6, -20);
+    context.bezierCurveTo(13, -24, 15, -35, 8, -41);
+    context.bezierCurveTo(5, -45, 2, -44, 0, -49);
+    context.closePath();
+    context.fill();
+    context.stroke();
+
+    context.fillStyle = faceColor;
+    context.beginPath();
+    context.ellipse(0, -27, 12.8, 8.7, 0, 0, Math.PI * 2);
+    context.fill();
+
+    context.fillStyle = brickColor.white;
+    context.beginPath();
+    context.ellipse(-3.3, -37.8, 3.2, 5.9, 0, 0, Math.PI * 2);
+    context.ellipse(3.3, -37.8, 3.2, 5.9, 0, 0, Math.PI * 2);
+    context.fill();
+    context.stroke();
+    context.fillStyle = palette.ink;
+    context.beginPath();
+    context.ellipse(-2.8, -36.5, 1.1, 2.2, 0, 0, Math.PI * 2);
+    context.ellipse(3.7, -36.5, 1.1, 2.2, 0, 0, Math.PI * 2);
+    context.fill();
+
+    context.beginPath();
+    context.ellipse(0, -28.5, 5.2, 3.8, 0, 0, Math.PI * 2);
+    context.fill();
+    context.fillStyle = brickColor.white;
+    context.beginPath();
+    context.arc(-1.7, -29.7, 1.1, 0, Math.PI * 2);
+    context.fill();
+    context.strokeStyle = palette.ink;
+    context.lineWidth = 2;
+    context.beginPath();
+    context.arc(0, -26, 7, 0.12 * Math.PI, 0.88 * Math.PI);
+    context.stroke();
+  }
+
   function drawToyFigure(x, y, scale, options = {}) {
     const bodyColor = options.body || brickColor.aqua;
     const legColor = options.legs || brickColor.blue;
@@ -956,12 +1098,41 @@
     context.lineCap = 'round';
     context.lineJoin = 'round';
 
+    // Character-specific tails sit behind the block body and strengthen the
+    // silhouette without changing any game collision.
+    if (kind === 'blue-pup') {
+      context.strokeStyle = palette.ink;
+      context.lineWidth = 9;
+      context.beginPath();
+      context.moveTo(-8, 0);
+      context.quadraticCurveTo(-24, -3, -24, -17);
+      context.stroke();
+      context.strokeStyle = brickColor.blue;
+      context.lineWidth = 5;
+      context.stroke();
+    } else if (kind === 'mouse') {
+      context.strokeStyle = palette.ink;
+      context.lineWidth = 3;
+      context.beginPath();
+      context.moveTo(8, 1);
+      context.bezierCurveTo(24, 5, 27, -12, 20, -18);
+      context.stroke();
+    } else if (kind === 'chipmunk') {
+      context.fillStyle = options.variant === 'dale' ? '#a87550' : '#76503d';
+      context.strokeStyle = palette.ink;
+      context.lineWidth = 3;
+      context.beginPath();
+      context.ellipse(-17, -3, 9, 18, -0.45, 0, Math.PI * 2);
+      context.fill();
+      context.stroke();
+    }
+
     // Legs and hip block.
     drawBrick(-11, 4, 22, 8, legColor, 2, 2);
     drawBrick(-11, 11, 9, 21, legColor, 1, 2);
     drawBrick(2, 11, 9, 21, legColor, 1, 2);
     if (kind === 'duck' || kind === 'mouse') {
-      const shoeColor = kind === 'duck' ? brickColor.orange : brickColor.yellow;
+      const shoeColor = kind === 'duck' ? duckOrange : brickColor.yellow;
       drawBrick(-13, 27, 12, 7, shoeColor, 1, 3);
       drawBrick(1, 27, 12, 7, shoeColor, 1, 3);
     }
@@ -978,7 +1149,19 @@
     context.strokeStyle = palette.ink;
     context.lineWidth = 3.5;
     context.stroke();
-    if (kind === 'mouse') {
+    if (kind === 'blue-pup') {
+      context.fillStyle = palette.surface;
+      roundedRectPath(context, -7, -15, 14, 17, 7);
+      context.fill();
+      context.fillStyle = brickColor.blue;
+      context.beginPath();
+      context.arc(-8, -13, 2.8, 0, Math.PI * 2);
+      context.arc(7, -4, 2.4, 0, Math.PI * 2);
+      context.fill();
+    } else if (kind === 'mouse') {
+      context.fillStyle = brickColor.red;
+      roundedRectPath(context, -11, -2, 22, 8, 2);
+      context.fill();
       drawStud(context, -4, -6, 2.2, brickColor.yellow, palette.ink);
       drawStud(context, 4, -6, 2.2, brickColor.yellow, palette.ink);
     } else if (kind === 'duck') {
@@ -998,6 +1181,19 @@
       context.closePath();
       context.fill();
     } else if (kind === 'spider-hero') {
+      context.fillStyle = accentColor;
+      context.beginPath();
+      context.moveTo(-12, -18);
+      context.lineTo(-6, -14);
+      context.lineTo(-6, 1);
+      context.lineTo(-10, 4);
+      context.closePath();
+      context.moveTo(12, -18);
+      context.lineTo(6, -14);
+      context.lineTo(6, 1);
+      context.lineTo(10, 4);
+      context.closePath();
+      context.fill();
       context.strokeStyle = palette.ink;
       context.lineWidth = 1.5;
       context.beginPath();
@@ -1012,7 +1208,14 @@
       context.fillStyle = accentColor;
       roundedRectPath(context, -6, -17, 12, 20, 6);
       context.fill();
-    } else if (kind !== 'elmo') {
+    } else if (kind === 'elmo') {
+      context.fillStyle = brickColor.red;
+      [-13, -10, 10, 13].forEach((fuzzX, index) => {
+        context.beginPath();
+        context.arc(fuzzX, index % 2 ? -7 : -15, 4.5, 0, Math.PI * 2);
+        context.fill();
+      });
+    } else {
       context.fillStyle = accentColor;
       roundedRectPath(context, -5, -12, 10, 9, 2);
       context.fill();
@@ -1033,6 +1236,17 @@
     context.stroke();
     drawStud(context, -24, armY, 5.3, handColor);
     drawStud(context, 24, armY, 5.3, handColor);
+
+    if (kind === 'duck') {
+      drawDonaldHead();
+      context.restore();
+      return;
+    }
+    if (kind === 'mouse') {
+      drawMickeyHead();
+      context.restore();
+      return;
+    }
 
     // Strong silhouettes make the tiny block characters readable at a glance.
     if (kind === 'blue-pup') {
@@ -1123,7 +1337,15 @@
       context.ellipse(-4, -38, 1.35, 2.2, 0, 0, Math.PI * 2);
       context.ellipse(5, -38, 1.35, 2.2, 0, 0, Math.PI * 2);
       context.fill();
-      context.fillStyle = brickColor.orange;
+      context.fillStyle = brickColor.white;
+      context.beginPath();
+      context.arc(-10, -31, 5.3, 0, Math.PI * 2);
+      context.arc(10, -31, 5.3, 0, Math.PI * 2);
+      context.fill();
+      context.strokeStyle = palette.ink;
+      context.lineWidth = 2;
+      context.stroke();
+      context.fillStyle = duckOrange;
       context.beginPath();
       context.moveTo(-12, -33);
       context.quadraticCurveTo(0, -38, 13, -32);
@@ -1209,6 +1431,12 @@
       context.stroke();
       context.globalAlpha = 1;
     } else if (kind === 'chipmunk') {
+      context.strokeStyle = options.variant === 'dale' ? '#76503d' : palette.ink;
+      context.lineWidth = 3;
+      context.beginPath();
+      context.moveTo(0, -46);
+      context.lineTo(0, -41);
+      context.stroke();
       context.fillStyle = '#f3d0a4';
       context.beginPath();
       context.ellipse(0, -34, 9, 10, 0, 0, Math.PI * 2);
@@ -1228,8 +1456,12 @@
       context.ellipse(0, -31, options.variant === 'dale' ? 3.1 : 2.2, 2.4, 0, 0, Math.PI * 2);
       context.fill();
       context.fillStyle = brickColor.white;
-      context.fillRect(-2.6, -28.5, 2.1, 3.7);
-      context.fillRect(0.5, -28.5, 2.1, 3.7);
+      if (options.variant === 'dale') {
+        context.fillRect(-2.6, -28.5, 2.1, 3.7);
+        context.fillRect(0.5, -28.5, 2.1, 3.7);
+      } else {
+        context.fillRect(-1.05, -28.5, 2.1, 3.7);
+      }
     } else if (kind === 'elmo') {
       context.fillStyle = brickColor.white;
       context.strokeStyle = palette.ink;
@@ -1271,6 +1503,58 @@
     context.restore();
   }
 
+  function drawPitchInlay() {
+    context.save();
+    context.globalAlpha = 0.72;
+
+    // A flat, printed brick-pitch fills the open middle without adding any
+    // collision geometry. The chevrons make the clean route to goal obvious.
+    roundedRectPath(context, 145, 205, 190, 316, 24);
+    context.fillStyle = 'rgba(107,170,112,.09)';
+    context.fill();
+    context.strokeStyle = 'rgba(107,170,112,.34)';
+    context.lineWidth = 4;
+    context.setLineDash([14, 10]);
+    context.stroke();
+
+    context.setLineDash([]);
+    context.strokeStyle = 'rgba(85,189,184,.28)';
+    context.lineWidth = 4;
+    roundedRectPath(context, 178, 205, 124, 72, 16);
+    context.stroke();
+    context.beginPath();
+    context.moveTo(146, 362);
+    context.lineTo(334, 362);
+    context.stroke();
+
+    const tileColors = [brickColor.red, brickColor.yellow, brickColor.aqua, brickColor.green];
+    [300, 350, 400, 450].forEach((tileY, index) => {
+      context.globalAlpha = 0.18;
+      context.fillStyle = tileColors[index % tileColors.length];
+      roundedRectPath(context, 153, tileY, 20, 11, 4);
+      context.fill();
+      roundedRectPath(context, 307, tileY, 20, 11, 4);
+      context.fill();
+    });
+
+    context.globalAlpha = 0.3;
+    context.strokeStyle = brickColor.blue;
+    context.lineWidth = 7;
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
+    [438, 385, 332, 289].forEach((arrowY) => {
+      context.beginPath();
+      context.moveTo(222, arrowY);
+      context.lineTo(240, arrowY - 14);
+      context.lineTo(258, arrowY);
+      context.stroke();
+    });
+
+    context.globalAlpha = 0.42;
+    drawStud(context, 240, 362, 5.5, brickColor.yellow, palette.ink);
+    context.restore();
+  }
+
   function drawPlayfield() {
     const gradient = context.createLinearGradient(0, 0, WIDTH, HEIGHT);
     gradient.addColorStop(0, '#fbf8ef');
@@ -1287,6 +1571,8 @@
       }
     }
     context.restore();
+
+    drawPitchInlay();
 
     drawBrick(46, 50, 213, 38, brickColor.aqua, 9, 5);
     drawBrick(46, 88, 54, 18, brickColor.red, 2, 3);
@@ -1393,25 +1679,47 @@
 
     // New Game cycles six deliberately readable block-character tributes.
     const goalieLook = goalieLooks[game.goalieTheme];
+    const reactionActive = rewardActive && rewardAge < 1220;
+    const reactionWave = reactionActive && !reducedMotion
+      ? Math.sin(clamp(rewardAge / 1050, 0, 1) * Math.PI)
+      : reactionActive ? 0.7 : 0;
+    const keeperDrawX = goal.keeperX + game.goalReactionDirection * 27 * reactionWave;
+    const keeperDrawY = goal.keeperY + 10 + 11 * reactionWave;
+
+    context.save();
+    context.translate(keeperDrawX, keeperDrawY);
+    context.rotate(game.goalReactionDirection * 0.48 * reactionWave);
     if (goalieLook.kind === 'chip-duo') {
-      drawToyFigure(goal.keeperX - 14, goal.keeperY + 13, 0.78, {
+      drawToyFigure(-14, 3, 0.84, {
         ...goalieLook,
         kind: 'chipmunk',
         variant: 'chip',
-        armsUp: false
+        armsUp: reactionActive
       });
-      drawToyFigure(goal.keeperX + 14, goal.keeperY + 13, 0.78, {
+      drawToyFigure(14, 3, 0.84, {
         ...goalieLook,
         kind: 'chipmunk',
         variant: 'dale',
-        armsUp: false,
+        armsUp: reactionActive,
         flip: true
       });
     } else {
-      drawToyFigure(goal.keeperX, goal.keeperY + 10, goalieLook.kind === 'duck' ? 1.18 : 1.14, {
+      drawToyFigure(0, 0, goalieLook.kind === 'duck' ? 1.27 : 1.22, {
         ...goalieLook,
-        armsUp: false
+        armsUp: reactionActive
       });
+    }
+    context.restore();
+
+    if (reactionActive) {
+      const bubbleX = keeperDrawX - game.goalReactionDirection * 31;
+      const bubbleY = Math.max(58, keeperDrawY - 66);
+      drawStud(context, bubbleX, bubbleY, 10, brickColor.yellow, palette.ink);
+      context.fillStyle = palette.ink;
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      context.font = '900 14px Fredoka, system-ui, sans-serif';
+      context.fillText('!', bubbleX, bubbleY + 1);
     }
     context.restore();
   }
