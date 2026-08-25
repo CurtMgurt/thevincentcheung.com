@@ -1769,6 +1769,7 @@ h1 span {
   border-radius: 24px;
   background: transparent;
   perspective: 1100px;
+  -webkit-perspective: 1100px;
   cursor: pointer;
   touch-action: manipulation;
 }
@@ -1791,7 +1792,9 @@ h1 span {
   position: absolute;
   inset: 0;
   display: block;
+  -webkit-transform-style: preserve-3d;
   transform-style: preserve-3d;
+  will-change: transform;
   transition: transform .56s cubic-bezier(.2, .78, .22, 1);
 }
 
@@ -1799,8 +1802,15 @@ h1 span {
   transform: translateY(-6px) rotateZ(-1deg);
 }
 
-.fact-card.is-flipped .card-flipper { transform: rotateY(180deg); }
-.fact-card.is-flipped:hover .card-flipper { transform: rotateY(180deg) translateY(-4px); }
+.fact-card.is-flipped .card-flipper {
+  -webkit-transform: rotateY(180deg);
+  transform: rotateY(180deg);
+}
+
+.fact-card.is-flipped:hover .card-flipper {
+  -webkit-transform: rotateY(180deg) translateY(-4px);
+  transform: rotateY(180deg) translateY(-4px);
+}
 
 .card-face {
   position: absolute;
@@ -1820,6 +1830,8 @@ h1 span {
   background:
     linear-gradient(150deg, rgba(255, 255, 255, .62), transparent 38%),
     var(--card-soft);
+  -webkit-transform: rotateY(0deg) translateZ(1px);
+  transform: rotateY(0deg) translateZ(1px);
 }
 
 .card-front::before,
@@ -1941,7 +1953,8 @@ h1 span {
     radial-gradient(circle at 16% 17%, rgba(255, 255, 255, .75) 0 4%, transparent 4.5%),
     radial-gradient(circle at 84% 82%, rgba(255, 255, 255, .52) 0 7%, transparent 7.5%),
     linear-gradient(145deg, var(--card-soft), color-mix(in srgb, var(--card-accent) 76%, white));
-  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg) translateZ(1px);
+  transform: rotateY(180deg) translateZ(1px);
 }
 
 .card-back::before {
@@ -2356,6 +2369,40 @@ footer p { margin: 0; }
   .fact-mark { width: clamp(28px, 8vw, 38px); font-size: clamp(14px, 4vw, 20px); }
 }
 
+@media (max-width: 540px) {
+  .card-zone { padding-inline: 14px; }
+
+  .card-deck {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 12px;
+  }
+
+  .fact-card:last-child {
+    width: calc((100% - 12px) / 2);
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+
+  .card-topline strong { font-size: clamp(12px, 3.7vw, 15px); }
+  .card-back strong { font-size: clamp(12px, 3.7vw, 15px); }
+  .fact-number,
+  .flip-back { font-size: clamp(6px, 1.9vw, 8px); }
+}
+
+@media (hover: none) {
+  .fact-card:hover:not(.is-flipped) .card-flipper {
+    -webkit-transform: none;
+    transform: none;
+  }
+
+  .fact-card.is-flipped:hover .card-flipper {
+    -webkit-transform: rotateY(180deg);
+    transform: rotateY(180deg);
+  }
+
+  .fact-card:hover .card-art img { transform: none; }
+}
+
 @media (max-width: 400px) {
   .hero,
   .planet-band,
@@ -2398,8 +2445,7 @@ footer p { margin: 0; }
   .deck-status { font-size: 7px; }
   .deck-status strong { font-size: 12px; }
   .deck-shuffle { min-height: 40px; padding-inline: 13px; font-size: 8px; }
-  .card-deck { gap: 7px; }
-  .fact-mark { display: none; }
+  .card-deck { gap: 11px 9px; }
   .flip-back { display: none; }
 }
 
