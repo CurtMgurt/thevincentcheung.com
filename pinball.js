@@ -186,6 +186,17 @@
     { ax: 386, ay: 452, bx: 329, by: 510, lastHit: -1000, side: 'right' }
   ];
 
+  // Short solid guards close the ambiguous side cracks beside the flippers.
+  // They still funnel the ball onto a real flipper surface—there is no catch.
+  const lowerGuards = [
+    { ax: 148, ay: 524, bx: 155, by: 540, side: 'left' },
+    { ax: 332, ay: 524, bx: 325, by: 540, side: 'right' }
+  ];
+
+  // The shooter lane already protects the right outlane. This short gate
+  // narrows the much easier left outlane while leaving a real drain path.
+  const leftOutlaneGuard = { ax: 35, ay: 466, bx: 88, by: 481 };
+
   const bumpers = [
     { x: 110, y: 248, radius: 29, color: brickColor.aqua, points: 100, label: '+100', lastHit: -1000 },
     { x: 358, y: 248, radius: 29, color: brickColor.yellow, points: 100, label: '+100', lastHit: -1000 }
@@ -209,13 +220,21 @@
     lastHit: -1000
   };
 
+  // The drawn goal is a physical object: the posts reject near misses and
+  // the back bar returns a scored ball to the playfield.
+  const goalFrame = [
+    { ax: goal.left, ay: 88, bx: goal.left, by: 151, part: 'left-post' },
+    { ax: goal.right, ay: 88, bx: goal.right, by: 151, part: 'right-post' },
+    { ax: goal.left, ay: 82, bx: goal.right, by: 82, part: 'back-bar' }
+  ];
+
   const flippers = [
     {
       side: 'left',
-      x: 158,
+      x: 155,
       y: 552,
-      length: 64,
-      radius: 11.25,
+      length: 66,
+      radius: 12.25,
       restAngle: 0.27,
       activeAngle: -0.43,
       angle: 0.27,
@@ -223,10 +242,10 @@
     },
     {
       side: 'right',
-      x: 322,
+      x: 325,
       y: 552,
-      length: 64,
-      radius: 11.25,
+      length: 66,
+      radius: 12.25,
       restAngle: Math.PI - 0.27,
       activeAngle: Math.PI + 0.43,
       angle: Math.PI - 0.27,
@@ -738,6 +757,10 @@
     const leftTipX = flippers[0].x + Math.cos(flippers[0].angle) * flippers[0].length;
     const rightTipX = flippers[1].x + Math.cos(flippers[1].angle) * flippers[1].length;
     canvas.dataset.flipperGap = Math.max(0, rightTipX - leftTipX - flippers[0].radius - flippers[1].radius).toFixed(1);
+    canvas.dataset.ballClearance = (rightTipX - leftTipX - flippers[0].radius - flippers[1].radius - ball.radius * 2).toFixed(1);
+    canvas.dataset.lowerGuards = String(lowerGuards.length);
+    canvas.dataset.leftOutlaneGuard = 'true';
+    canvas.dataset.goalFrameSegments = String(goalFrame.length);
     canvas.dataset.leftFlipperOmega = flippers[0].omega.toFixed(2);
     canvas.dataset.rightFlipperOmega = flippers[1].omega.toFixed(2);
     canvas.dataset.goalReward = String(rewardActive);
@@ -797,12 +820,16 @@
     ball.x += ball.vx * dt;
     ball.y += ball.vy * dt;
     if (!game.launchGateClosed && ball.y < 235) game.launchGateClosed = true;
+    checkGoal(previousY, now);
 
     for (let pass = 0; pass < 2; pass += 1) {
       walls.forEach((wall) => collideSegment(wall));
+      goalFrame.forEach((frame) => collideSegment(frame, 5, 0.74, frame.part === 'back-bar' ? 8 : 2));
       if (game.launchGateClosed) {
         launchGates.forEach((gate) => collideSegment(gate, 5, 0.84, 36));
       }
+
+      collideSegment(leftOutlaneGuard, 6, 0.86, 52);
 
       slings.forEach((sling) => {
         if (!collideSegment(sling, 6, 0.9, 78)) return;
@@ -814,6 +841,8 @@
         }
       });
 
+      lowerGuards.forEach((guard) => collideSegment(guard, 6, 0.82, 22));
+
       bumpers.forEach((bumper) => collideBumper(bumper, now));
       blockTargets.forEach((target) => collideTarget(target, now));
       collideGoalie(now);
@@ -821,7 +850,6 @@
       collideFlipper(flippers[1], rightDown());
     }
 
-    checkGoal(previousY, now);
     capBallSpeed();
     if (ball.y - ball.radius > HEIGHT + 20) loseBall(now);
   }
@@ -891,6 +919,13 @@
     for (let index = 0; index < studs; index += 1) {
       drawStud(context, x + spacing * (index + 0.5), y + 1, Math.min(6.6, spacing * 0.25), fill);
     }
+    context.restore();
+  }
+
+  function drawSceneryBrick(x, y, width, height, fill, studs = 2, radius = 5, opacity = 0.34) {
+    context.save();
+    context.globalAlpha *= opacity;
+    drawBrick(x, y, width, height, fill, studs, radius);
     context.restore();
   }
 
@@ -1574,11 +1609,11 @@
 
     drawPitchInlay();
 
-    drawBrick(46, 50, 213, 38, brickColor.aqua, 9, 5);
-    drawBrick(46, 88, 54, 18, brickColor.red, 2, 3);
-    drawBrick(100, 88, 54, 18, brickColor.yellow, 2, 3);
-    drawBrick(154, 88, 54, 18, brickColor.green, 2, 3);
-    drawBrick(208, 88, 51, 18, brickColor.red, 2, 3);
+    drawSceneryBrick(46, 50, 213, 38, brickColor.aqua, 9, 5);
+    drawSceneryBrick(46, 88, 54, 18, brickColor.red, 2, 3);
+    drawSceneryBrick(100, 88, 54, 18, brickColor.yellow, 2, 3);
+    drawSceneryBrick(154, 88, 54, 18, brickColor.green, 2, 3);
+    drawSceneryBrick(208, 88, 51, 18, brickColor.red, 2, 3);
     for (let index = 0; index < 3; index += 1) {
       drawStud(
         context,
@@ -1592,10 +1627,10 @@
 
     // Stacked primary-color blocks make the toy construction language visible
     // even before the ball reaches a target.
-    drawBrick(35, 384, 34, 25, brickColor.red, 2, 3);
-    drawBrick(35, 409, 52, 25, brickColor.aqua, 3, 3);
-    drawBrick(411, 374, 34, 25, brickColor.yellow, 2, 3);
-    drawBrick(393, 399, 52, 25, brickColor.green, 3, 3);
+    drawSceneryBrick(35, 384, 34, 25, brickColor.red, 2, 3);
+    drawSceneryBrick(35, 409, 52, 25, brickColor.aqua, 3, 3);
+    drawSceneryBrick(411, 374, 34, 25, brickColor.yellow, 2, 3);
+    drawSceneryBrick(393, 399, 52, 25, brickColor.green, 3, 3);
   }
 
   function drawGoal(now) {
@@ -1745,6 +1780,12 @@
       const hot = performance.now() - sling.lastHit < 150;
       drawBrickBeam(sling, hot ? brickColor.yellow : brickColor.orange, hot ? 23 : 20);
     });
+
+    lowerGuards.forEach((guard) => {
+      drawBrickBeam(guard, guard.side === 'left' ? brickColor.red : brickColor.aqua, 18);
+    });
+
+    drawBrickBeam(leftOutlaneGuard, brickColor.yellow, 18);
 
     if (game.launchGateClosed) {
       launchGates.forEach((gate, index) => {

@@ -19,15 +19,17 @@
   }
 
   function updateStatus() {
-    const count = cards().filter((card) => card.classList.contains('is-flipped')).length;
+    const allCards = cards();
+    const count = allCards.filter((card) => card.classList.contains('is-flipped')).length;
+    const total = allCards.length;
     showingCount.textContent = String(count);
 
-    if (count === 9) {
-      status.lastChild.textContent = ' / 9 found!';
+    if (count === total) {
+      status.lastChild.textContent = ` / ${total} found!`;
       zone.classList.add('is-complete');
       celebrateDeck();
     } else {
-      status.lastChild.textContent = ' / 9 showing';
+      status.lastChild.textContent = ` / ${total} showing`;
       zone.classList.remove('is-complete');
     }
   }
@@ -58,13 +60,14 @@
 
   function setCardState(card, flipped) {
     const name = card.dataset.cardName;
+    const memory = card.dataset.memoryLabel || 'memory';
     card.classList.toggle('is-flipped', flipped);
     card.setAttribute('aria-pressed', String(flipped));
     card.setAttribute(
       'aria-label',
       flipped
-        ? `Hide the Vincent fact behind ${name}`
-        : `Flip ${name} card to reveal a Vincent fact`,
+        ? `Hide the illustrated ${memory} and Vincent fact behind ${name}`
+        : `Flip ${name} card to reveal an illustrated ${memory} and Vincent fact`,
     );
   }
 

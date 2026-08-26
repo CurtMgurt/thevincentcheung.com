@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=20260824-mobile-card-flip-v2" />
+    <link rel="stylesheet" href="styles.css?v=20260826-card-art-gallery-v2" />
   </head>
   <body>
     <div class="page-texture" aria-hidden="true"></div>
@@ -135,13 +135,13 @@
             <h2 id="card-zone-title">Vincent's<br /><span>deck.</span></h2>
           </div>
           <div class="deck-controls">
-            <p class="deck-status" aria-live="polite"><strong id="cards-showing">0</strong> / 9 showing</p>
+            <p class="deck-status" aria-live="polite"><strong id="cards-showing">0</strong> / 10 showing</p>
             <button class="deck-shuffle" type="button">shuffle</button>
           </div>
         </header>
 
-        <div class="card-deck is-dealing" role="group" aria-label="Nine cards that reveal fun facts about Vincent">
-          <button class="fact-card card-electric" type="button" data-card-name="Pikachu" style="--deal-index: 0" aria-pressed="false" aria-label="Flip Pikachu card to reveal a Vincent fact">
+        <div class="card-deck is-dealing" role="group" aria-label="Ten cards that reveal fun facts and illustrated memories about Vincent">
+          <button class="fact-card card-electric" type="button" data-card-name="Pikachu" data-memory-label="space ride" style="--deal-index: 0" aria-pressed="false" aria-label="Flip Pikachu card to reveal a Vincent fact and illustrated space-ride memory">
             <span class="card-flipper">
               <span class="card-face card-front">
                 <span class="card-topline"><strong>Pikachu</strong><i aria-hidden="true">&#9889;</i></span>
@@ -150,14 +150,14 @@
               </span>
               <span class="card-face card-back">
                 <span class="fact-number">fact 01</span>
-                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <span class="memory-art"><img src="assets/memories/space-ride.jpg" alt="" loading="lazy" decoding="async" /></span>
                 <strong>Vincent knows all five dwarf planets.</strong>
                 <span class="flip-back">tap to flip back</span>
               </span>
             </span>
           </button>
 
-          <button class="fact-card card-grass" type="button" data-card-name="Bulbasaur" style="--deal-index: 1" aria-pressed="false" aria-label="Flip Bulbasaur card to reveal a Vincent fact">
+          <button class="fact-card card-grass" type="button" data-card-name="Bulbasaur" data-memory-label="forest adventure" style="--deal-index: 1" aria-pressed="false" aria-label="Flip Bulbasaur card to reveal a Vincent fact and illustrated forest memory">
             <span class="card-flipper">
               <span class="card-face card-front">
                 <span class="card-topline"><strong>Bulbasaur</strong><i aria-hidden="true">&#9752;</i></span>
@@ -166,14 +166,14 @@
               </span>
               <span class="card-face card-back">
                 <span class="fact-number">fact 02</span>
-                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <span class="memory-art"><img src="assets/memories/forest-stump.jpg" alt="" loading="lazy" decoding="async" /></span>
                 <strong>Vincent is an expert LEGO BrickHeadz builder.</strong>
                 <span class="flip-back">tap to flip back</span>
               </span>
             </span>
           </button>
 
-          <button class="fact-card card-fire" type="button" data-card-name="Charmander" style="--deal-index: 2" aria-pressed="false" aria-label="Flip Charmander card to reveal a Vincent fact">
+          <button class="fact-card card-fire" type="button" data-card-name="Charmander" data-memory-label="red spinner" style="--deal-index: 2" aria-pressed="false" aria-label="Flip Charmander card to reveal a Vincent fact and illustrated red-spinner memory">
             <span class="card-flipper">
               <span class="card-face card-front">
                 <span class="card-topline"><strong>Charmander</strong><i aria-hidden="true">&#9670;</i></span>
@@ -182,14 +182,14 @@
               </span>
               <span class="card-face card-back">
                 <span class="fact-number">fact 03</span>
-                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <span class="memory-art"><img src="assets/memories/red-spin.jpg" alt="" loading="lazy" decoding="async" /></span>
                 <strong>His favorite color is red.</strong>
                 <span class="flip-back">tap to flip back</span>
               </span>
             </span>
           </button>
 
-          <button class="fact-card card-water" type="button" data-card-name="Squirtle" style="--deal-index: 3" aria-pressed="false" aria-label="Flip Squirtle card to reveal a Vincent fact">
+          <button class="fact-card card-water" type="button" data-card-name="Squirtle" data-memory-label="bike ride with Daddy" style="--deal-index: 3" aria-pressed="false" aria-label="Flip Squirtle card to reveal a Vincent fact and illustrated bike memory">
             <span class="card-flipper">
               <span class="card-face card-front">
                 <span class="card-topline"><strong>Squirtle</strong><i aria-hidden="true">&#9679;</i></span>
@@ -198,14 +198,14 @@
               </span>
               <span class="card-face card-back">
                 <span class="fact-number">fact 04</span>
-                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <span class="memory-art"><img src="assets/memories/bike-daddy.jpg" alt="" loading="lazy" decoding="async" /></span>
                 <strong>He loves pinball and mini golf with Daddy.</strong>
                 <span class="flip-back">tap to flip back</span>
               </span>
             </span>
           </button>
 
-          <button class="fact-card card-eevee" type="button" data-card-name="Eevee" style="--deal-index: 4" aria-pressed="false" aria-label="Flip Eevee card to reveal a Vincent fact">
+          <button class="fact-card card-eevee" type="button" data-card-name="Eevee" data-memory-label="cozy time with Mommy" style="--deal-index: 4" aria-pressed="false" aria-label="Flip Eevee card to reveal a Vincent fact and illustrated Mommy memory">
             <span class="card-flipper">
               <span class="card-face card-front">
                 <span class="card-topline"><strong>Eevee</strong><i aria-hidden="true">&#10022;</i></span>
@@ -214,14 +214,14 @@
               </span>
               <span class="card-face card-back">
                 <span class="fact-number">fact 05</span>
-                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <span class="memory-art"><img src="assets/memories/mommy-couch.jpg" alt="" loading="lazy" decoding="async" /></span>
                 <strong>Vincent's favorite hugs come from Mommy.</strong>
                 <span class="flip-back">tap to flip back</span>
               </span>
             </span>
           </button>
 
-          <button class="fact-card card-sleepy" type="button" data-card-name="Snorlax" style="--deal-index: 5" aria-pressed="false" aria-label="Flip Snorlax card to reveal a Vincent fact">
+          <button class="fact-card card-sleepy" type="button" data-card-name="Snorlax" data-memory-label="pastry stop" style="--deal-index: 5" aria-pressed="false" aria-label="Flip Snorlax card to reveal a Vincent fact and illustrated pastry memory">
             <span class="card-flipper">
               <span class="card-face card-front">
                 <span class="card-topline"><strong>Snorlax</strong><i aria-hidden="true">Zz</i></span>
@@ -230,14 +230,14 @@
               </span>
               <span class="card-face card-back">
                 <span class="fact-number">fact 06</span>
-                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <span class="memory-art"><img src="assets/memories/pastry-peace.jpg" alt="" loading="lazy" decoding="async" /></span>
                 <strong>He's becoming an iron-powered snack champion.</strong>
                 <span class="flip-back">tap to flip back</span>
               </span>
             </span>
           </button>
 
-          <button class="fact-card card-psyduck" type="button" data-card-name="Psyduck" style="--deal-index: 6" aria-pressed="false" aria-label="Flip Psyduck card to reveal a Vincent fact">
+          <button class="fact-card card-psyduck" type="button" data-card-name="Psyduck" data-memory-label="beach day" style="--deal-index: 6" aria-pressed="false" aria-label="Flip Psyduck card to reveal a Vincent fact and illustrated beach memory">
             <span class="card-flipper">
               <span class="card-face card-front">
                 <span class="card-topline"><strong>Psyduck</strong><i aria-hidden="true">?</i></span>
@@ -246,14 +246,14 @@
               </span>
               <span class="card-face card-back">
                 <span class="fact-number">fact 07</span>
-                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <span class="memory-art"><img src="assets/memories/beach-peace.jpg" alt="" loading="lazy" decoding="async" /></span>
                 <strong>Vincent reads comics—mostly the pictures. Words are next.</strong>
                 <span class="flip-back">tap to flip back</span>
               </span>
             </span>
           </button>
 
-          <button class="fact-card card-ghost" type="button" data-card-name="Gengar" style="--deal-index: 7" aria-pressed="false" aria-label="Flip Gengar card to reveal a Vincent fact">
+          <button class="fact-card card-ghost" type="button" data-card-name="Gengar" data-memory-label="water-slide splash" style="--deal-index: 7" aria-pressed="false" aria-label="Flip Gengar card to reveal a Vincent fact and illustrated water-slide memory">
             <span class="card-flipper">
               <span class="card-face card-front">
                 <span class="card-topline"><strong>Gengar</strong><i aria-hidden="true">&#9789;</i></span>
@@ -262,14 +262,14 @@
               </span>
               <span class="card-face card-back">
                 <span class="fact-number">fact 08</span>
-                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <span class="memory-art"><img src="assets/memories/water-slide.jpg" alt="" loading="lazy" decoding="async" /></span>
                 <strong>He can buckle his car-seat belt all by himself.</strong>
                 <span class="flip-back">tap to flip back</span>
               </span>
             </span>
           </button>
 
-          <button class="fact-card card-fairy" type="button" data-card-name="Jigglypuff" style="--deal-index: 8" aria-pressed="false" aria-label="Flip Jigglypuff card to reveal a Vincent fact">
+          <button class="fact-card card-fairy" type="button" data-card-name="Jigglypuff" data-memory-label="drum session" style="--deal-index: 8" aria-pressed="false" aria-label="Flip Jigglypuff card to reveal a Vincent fact and illustrated drum memory">
             <span class="card-flipper">
               <span class="card-face card-front">
                 <span class="card-topline"><strong>Jigglypuff</strong><i aria-hidden="true">&#9834;</i></span>
@@ -278,20 +278,73 @@
               </span>
               <span class="card-face card-back">
                 <span class="fact-number">fact 09</span>
-                <span class="fact-mark" aria-hidden="true">&#10022;</span>
+                <span class="memory-art"><img src="assets/memories/drum-beat.jpg" alt="" loading="lazy" decoding="async" /></span>
                 <strong>Vincent knows several KPop Demon Hunters songs by heart.</strong>
+                <span class="flip-back">tap to flip back</span>
+              </span>
+            </span>
+          </button>
+
+          <button class="fact-card card-memory" type="button" data-card-name="Vincent" data-memory-label="family pool day" style="--deal-index: 9" aria-pressed="false" aria-label="Flip Vincent's bonus card to reveal an illustrated family memory">
+            <span class="card-flipper">
+              <span class="card-face card-front">
+                <span class="card-topline"><strong>Vincent</strong><i aria-hidden="true">&#9733;</i></span>
+                <span class="card-art card-art-v" aria-hidden="true">
+                  <span class="v-crest"><span class="v-rank">&#9733; 001</span><b>V</b><small>VINCENT</small></span>
+                  <i>&#10022;</i><i>&#9733;</i><i>&#10022;</i><i>&#10022;</i>
+                </span>
+                <span class="card-foot"><span>special</span><b aria-hidden="true">V&#9733;</b></span>
+              </span>
+              <span class="card-face card-back">
+                <span class="fact-number">bonus</span>
+                <span class="memory-art"><img src="assets/memories/family-pool.jpg" alt="" loading="lazy" decoding="async" /></span>
+                <strong>Pool day with Mommy, Daddy, and shaved ice.</strong>
                 <span class="flip-back">tap to flip back</span>
               </span>
             </span>
           </button>
         </div>
       </section>
+
+      <section class="art-zone" id="art-lab" aria-labelledby="art-zone-title">
+        <header class="art-zone-heading">
+          <div>
+            <p class="art-kicker">new masterpieces</p>
+            <h2 id="art-zone-title">Vincent's<br /><span>art lab.</span></h2>
+          </div>
+          <p class="art-hint">tap one to look closer</p>
+        </header>
+
+        <div class="art-grid" role="group" aria-label="Four pieces of artwork by Vincent">
+          <button class="art-piece" type="button" data-art-src="assets/art/for-daddy.jpg" aria-label="Open Vincent artwork one">
+            <span class="art-sheet"><img src="assets/art/for-daddy.jpg" alt="A crayon rainbow, sun, clouds, hearts, and a message for Daddy" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/pokemon-world.jpg" aria-label="Open Vincent artwork two">
+            <span class="art-sheet"><img src="assets/art/pokemon-world.jpg" alt="A busy crayon world filled with creatures, shapes, and bright color" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/pokemon-battle.jpg" aria-label="Open Vincent artwork three">
+            <span class="art-sheet"><img src="assets/art/pokemon-battle.jpg" alt="A landscape crayon battle scene with colorful creatures and flying shapes" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/balloon-painting.jpg" aria-label="Open Vincent artwork four">
+            <span class="art-sheet"><img src="assets/art/balloon-painting.jpg" alt="Purple, teal, and white balloon-print shapes on pale pink paper" loading="lazy" decoding="async" /></span>
+          </button>
+        </div>
+      </section>
+
+      <dialog class="art-lightbox" aria-label="Artwork close-up">
+        <button class="art-close" type="button" aria-label="Close artwork">close</button>
+        <img src="" alt="" />
+      </dialog>
     </main>
 
     <footer><p>&copy; <span id="year"></span> THEVINCENTCHEUNG.COM</p></footer>
     <div class="toast" role="status" aria-live="polite"></div>
     <script src="script.js?v=20260823-single-web"></script>
-    <script src="pinball.js?v=20260824-character-heads-v3"></script>
-    <script src="cards.js?v=20260824-pokemon-facts"></script>
+    <script src="pinball.js?v=20260825-physical-goal-v1"></script>
+    <script src="cards.js?v=20260825-memory-cards-v1"></script>
+    <script src="gallery.js?v=20260826-art-lab-v2"></script>
   </body>
 </html>
