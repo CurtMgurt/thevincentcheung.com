@@ -1,4 +1,5 @@
-"""Build icons and a social preview from the existing public artwork (Pillow)."""
+"""Build icons and a social preview (Pillow, Node, and Sharp for SVG rendering)."""
+import subprocess
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
@@ -6,7 +7,6 @@ ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets"
 PAPER = "#fbf8ef"
 TEAL = "#306661"
-CORAL = "#cb6759"
 
 
 def font(size, bold=False):
@@ -14,12 +14,7 @@ def font(size, bold=False):
     return ImageFont.truetype(str(path), size) if path.exists() else ImageFont.load_default(size=size)
 
 
-icon = Image.new("RGB", (720, 720), PAPER)
-draw = ImageDraw.Draw(icon)
-draw.line([(100, 190), (220, 540), (340, 190)], fill=CORAL, width=70, joint="curve")
-draw.arc((290, 155, 625, 555), 48, 312, fill=TEAL, width=70)
-for name, size in [("favicon-32.png", 32), ("apple-touch-icon.png", 180)]:
-    icon.resize((size, size), Image.Resampling.LANCZOS).save(ASSETS / name)
+subprocess.run(["node", str(ROOT / "scripts/prepare_icons.mjs")], check=True)
 
 card = Image.new("RGB", (1200, 630), PAPER)
 draw = ImageDraw.Draw(card)
