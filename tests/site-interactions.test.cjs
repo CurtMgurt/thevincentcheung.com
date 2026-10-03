@@ -45,7 +45,7 @@ test('home leads with Vincent and artwork, with pinball initially hidden', () =>
   assert.doesNotMatch(html, /art lab|mini-planet|fact-card|art-caption|data-art-title|script src="cards\.js/i);
   assert.match(html, /class="photo-card planet"/);
   assert.match(html, /script src="script\.js/);
-  assert.equal([...html.matchAll(/class="art-piece"/g)].length, 30);
+  assert.equal([...html.matchAll(/class="art-piece"/g)].length, 33);
   assert.ok(html.indexOf('class="art-grid"') < html.indexOf('class="pinball-zone"'));
   assert.match(html, /id="pinball" hidden/);
 });
