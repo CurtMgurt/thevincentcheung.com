@@ -13,7 +13,8 @@ Run the interaction regression tests with `node --test tests/*.test.cjs`.
 - A playful gallery with Vincent's profile photo, warm colors, and taped artwork.
 - Photo pops with occasional laughs, a tiny web-shooting spider, and a saved
   sound preference behind a small speaker control in the footer.
-- Full-size artwork dialogs with keyboard dismissal and restored focus.
+- Full-size artwork dialogs with previous/next controls, keyboard navigation,
+  phone swiping, zoom, sharing, keyboard dismissal, and restored focus.
 - Brickball hidden behind the tiny pinball machine in the footer, also reachable with
   `#pinball`. Keyboard/touch controls and device-local best scores are preserved.
 - Self-hosted assets, with no accounts, analytics, or external runtime requests.
@@ -32,13 +33,26 @@ but their sections are no longer shown on the homepage.
 
 ## Publishing
 
-The site is ready for GitHub Pages with the included `CNAME` file. Publish the
-repository from its root branch, then point the domain's GoDaddy DNS records to
-GitHub Pages.
+GitHub Pages uses the **GitHub Actions** source in the repository's Pages
+settings. `.github/workflows/pages.yml` runs the regression tests and builds
+the site on pull requests and pushes to `main`. Publishing only runs on `main`
+after both checks succeed, including when a commit is pushed directly. The
+workflow uses pinned official actions and gives publishing permissions only
+to the deployment job. No package install or deployment secret is needed.
 
-Publish the tracked files, not the entire working folder. Keep the ignored
-original photos and local `mockups/` out of uploads. Font licenses are included
-in `assets/fonts`.
+Run `node scripts/build-site.mjs` to create the same `_site/` artifact locally.
+The build copies a narrow allowlist of public entry points and assets referenced
+by the HTML/CSS, includes the lazy-loaded pinball script and font licenses, and
+fails if a referenced file is missing or outside the allowlist. It excludes
+originals, mockups, tests, development scripts, unused artwork experiments, and
+repository files. Upload or deploy `_site/`, never the whole working folder.
+
+Keep `CNAME` set to `thevincentcheung.com` and HTTPS enforced in Pages settings.
+Require the `validate` status check for `main` to protect pull-request merges.
+Use strong two-factor authentication for both GitHub and the domain registrar;
+these account settings must be verified separately from repository checks.
+
+See [GitHub's custom Pages workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
 ## Security policy
 

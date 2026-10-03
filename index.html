@@ -7,9 +7,25 @@
     <meta name="referrer" content="no-referrer" />
     <meta name="theme-color" content="#fbf8ef" />
     <meta name="description" content="Drawings and paintings by Vincent Cheung." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Vincent Cheung's drawings" />
+    <meta property="og:description" content="A colorful gallery of Vincent's drawings, handmade cards, and little surprises." />
+    <meta property="og:url" content="https://thevincentcheung.com/" />
+    <meta property="og:image" content="https://thevincentcheung.com/assets/share-card.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Vincent's green heart creatures, purple notebook creatures, and numbered creature drawing" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Vincent Cheung's drawings" />
+    <meta name="twitter:description" content="A colorful gallery of drawings and handmade cards by Vincent." />
+    <meta name="twitter:image" content="https://thevincentcheung.com/assets/share-card.jpg" />
     <title>Vincent Cheung</title>
+    <link rel="canonical" href="https://thevincentcheung.com/" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" sizes="180x180" />
     <link rel="preload" href="assets/fonts/fredoka-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="styles.css?v=20261003-gallery-v22" />
+    <link rel="stylesheet" href="styles.css?v=20261003-gallery-v23" />
   </head>
   <body class="gallery-home">
     <a class="skip-link" href="#gallery">Skip to artwork</a>
@@ -60,137 +76,137 @@
       </section>
       <section class="art-zone gallery-collection" id="gallery" aria-label="Artwork by Vincent" tabindex="-1">
         <div class="art-grid" role="group" aria-label="Artwork by Vincent">
-          <button class="art-piece" type="button" data-art-src="assets/art/fei-green-hearts.webp" aria-label="Open artwork 1">
+          <button class="art-piece" id="art-fei-green-hearts" type="button" data-art-src="assets/art/fei-green-hearts.webp" data-art-name="Fei green hearts" data-art-shape="portrait" aria-label="Open Fei green hearts">
             <span class="art-sheet"><img src="assets/art/fei-green-hearts-preview.webp" srcset="assets/art/fei-green-hearts-preview.webp 544w, assets/art/fei-green-hearts.webp 1087w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Two smiling green creatures surrounded by pencil hearts beneath Vincent's name and large pink Fei lettering" width="544" height="800" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/purple-notebook-creatures.webp" aria-label="Open artwork 2">
+          <button class="art-piece" id="art-purple-notebook-creatures" type="button" data-art-src="assets/art/purple-notebook-creatures.webp" data-art-name="Purple notebook creatures" aria-label="Open Purple notebook creatures">
             <span class="art-sheet"><img src="assets/art/purple-notebook-creatures-preview.webp" srcset="assets/art/purple-notebook-creatures-preview.webp 800w, assets/art/purple-notebook-creatures.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Purple and green creatures with smiling faces on lined notebook paper beside Vincent's handwritten name" width="800" height="544" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/numbered-creatures-bus.webp" aria-label="Open artwork 3">
+          <button class="art-piece" id="art-numbered-creatures-bus" type="button" data-art-src="assets/art/numbered-creatures-bus.webp" data-art-name="Numbered creatures and bus" aria-label="Open Numbered creatures and bus">
             <span class="art-sheet"><img src="assets/art/numbered-creatures-bus-preview.webp" srcset="assets/art/numbered-creatures-bus-preview.webp 800w, assets/art/numbered-creatures-bus.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="A numbered grid of pencil creatures above a bus with outlined wheels and windows" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/numbered-world.webp" aria-label="Open artwork 4">
+          <button class="art-piece" id="art-numbered-world" type="button" data-art-src="assets/art/numbered-world.webp" data-art-name="Numbered world" data-art-shape="portrait" aria-label="Open Numbered world">
             <span class="art-sheet"><img src="assets/art/numbered-world-preview.webp" srcset="assets/art/numbered-world-preview.webp 577w, assets/art/numbered-world.webp 1154w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Colorful figures, green trees, a sun, and a dark structure beside numbered blue lines" width="577" height="800" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/question-mark-doodles.webp" aria-label="Open artwork 5">
+          <button class="art-piece" id="art-question-mark-doodles" type="button" data-art-src="assets/art/question-mark-doodles.webp" data-art-name="Question mark doodles" data-art-shape="portrait" aria-label="Open Question mark doodles">
             <span class="art-sheet"><img src="assets/art/question-mark-doodles-preview.webp" srcset="assets/art/question-mark-doodles-preview.webp 577w, assets/art/question-mark-doodles.webp 1154w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Black pen doodles in outlined boxes, several question marks, and Vincent's handwritten name" width="577" height="800" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/music-notes.webp" aria-label="Open artwork 6">
+          <button class="art-piece" id="art-music-notes" type="button" data-art-src="assets/art/music-notes.webp" data-art-name="Music for Mommy and Daddy" data-art-shape="portrait" aria-label="Open Music for Mommy and Daddy">
             <span class="art-sheet"><img src="assets/art/music-notes-preview.webp" srcset="assets/art/music-notes-preview.webp 577w, assets/art/music-notes.webp 1154w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Pink and black musical notes and staves with hearts and handwritten messages for Mommy and Daddy" width="577" height="800" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/rainbow-hearts-star.webp" aria-label="Open artwork 7">
+          <button class="art-piece" id="art-rainbow-hearts-star" type="button" data-art-src="assets/art/rainbow-hearts-star.webp" data-art-name="Fei rainbow hearts and star" aria-label="Open Fei rainbow hearts and star">
             <span class="art-sheet"><img src="assets/art/rainbow-hearts-star-preview.webp" srcset="assets/art/rainbow-hearts-star-preview.webp 800w, assets/art/rainbow-hearts-star.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Colorful hearts, a rainbow, a yellow star, and a large pale purple star with faces" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/rainbow-hearts-faces.webp" aria-label="Open artwork 8">
+          <button class="art-piece" id="art-rainbow-hearts-faces" type="button" data-art-src="assets/art/rainbow-hearts-faces.webp" data-art-name="Fei rainbow hearts and faces" aria-label="Open Fei rainbow hearts and faces">
             <span class="art-sheet"><img src="assets/art/rainbow-hearts-faces-preview.webp" srcset="assets/art/rainbow-hearts-faces-preview.webp 800w, assets/art/rainbow-hearts-faces.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Pale purple faces surrounded by colorful hearts, a rainbow, and a yellow star" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/bus-rings.webp" aria-label="Open artwork 9">
+          <button class="art-piece" id="art-bus-rings" type="button" data-art-src="assets/art/bus-rings.webp" data-art-name="Bus rings" aria-label="Open Bus rings">
             <span class="art-sheet"><img src="assets/art/bus-rings-preview.webp" srcset="assets/art/bus-rings-preview.webp 800w, assets/art/bus-rings.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Concentric pencil rings around a red and blue circle and large blue lettering" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/rainbow-train.webp" aria-label="Open artwork 10">
+          <button class="art-piece" id="art-rainbow-train" type="button" data-art-src="assets/art/rainbow-train.webp" data-art-name="Rainbow train" aria-label="Open Rainbow train">
             <span class="art-sheet"><img src="assets/art/rainbow-train-preview.webp" srcset="assets/art/rainbow-train-preview.webp 800w, assets/art/rainbow-train.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="A dark train beneath a rainbow beside a blue building, green ground, clouds, and a yellow sun" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/rainbow-grid.webp" aria-label="Open artwork 11">
+          <button class="art-piece" id="art-rainbow-grid" type="button" data-art-src="assets/art/rainbow-grid.webp" data-art-name="Rainbow shape grid" data-art-shape="portrait" aria-label="Open Rainbow shape grid">
             <span class="art-sheet"><img src="assets/art/rainbow-grid-preview.webp" srcset="assets/art/rainbow-grid-preview.webp 577w, assets/art/rainbow-grid.webp 1154w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Rainbow-colored bands filled with small outlined shapes, with clouds, hearts, and messages for Mommy and Daddy" width="577" height="800" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/ice-type.webp" aria-label="Open artwork 12">
+          <button class="art-piece" id="art-ice-type" type="button" data-art-src="assets/art/ice-type.webp" data-art-name="Ice Type creatures" aria-label="Open Ice Type creatures">
             <span class="art-sheet"><img src="assets/art/ice-type-preview.webp" srcset="assets/art/ice-type-preview.webp 800w, assets/art/ice-type.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Blue ice-themed creatures beneath handwritten Ice Type lettering" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
           <div class="art-set art-sheet" role="group" aria-label="Birthday card, front and back">
-            <button class="art-piece" type="button" data-art-src="assets/art/birthday-card-front.webp" aria-label="Open artwork 13, birthday card front">
+            <button class="art-piece" id="art-birthday-card-front" type="button" data-art-src="assets/art/birthday-card-front.webp" data-art-name="Birthday card front" aria-label="Open Birthday card front">
               <img src="assets/art/birthday-card-front-preview.webp" srcset="assets/art/birthday-card-front-preview.webp 800w, assets/art/birthday-card-front.webp 1477w" sizes="(max-width: 760px) calc((100vw - 112px) / 2), 480px" alt="A handmade card on orange paper with pencil people, yellow stars, a pencil heart, and red paper DAD lettering" width="800" height="577" loading="lazy" decoding="async" />
             </button>
-            <button class="art-piece" type="button" data-art-src="assets/art/birthday-card-back.webp" aria-label="Open artwork 14, birthday card back">
+            <button class="art-piece" id="art-birthday-card-back" type="button" data-art-src="assets/art/birthday-card-back.webp" data-art-name="Birthday card back" aria-label="Open Birthday card back">
               <img src="assets/art/birthday-card-back-preview.webp" srcset="assets/art/birthday-card-back-preview.webp 800w, assets/art/birthday-card-back.webp 1476w" sizes="(max-width: 760px) calc((100vw - 112px) / 2), 480px" alt="A handmade birthday card on orange paper with a rainbow, three people, red paper hearts, and handwritten birthday wishes for Dad" width="800" height="578" loading="lazy" decoding="async" />
             </button>
           </div>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/airplane-panorama.webp" data-art-shape="panorama" aria-label="Open artwork 15">
+          <button class="art-piece" id="art-airplane-panorama" type="button" data-art-src="assets/art/airplane-panorama.webp" data-art-name="Airplane panorama" data-art-shape="panorama" aria-label="Open Airplane panorama">
             <span class="art-sheet"><img src="assets/art/airplane-panorama-preview.webp" srcset="assets/art/airplane-panorama-preview.webp 1200w, assets/art/airplane-panorama.webp 2400w" sizes="(max-width: 760px) calc(100vw - 96px), 1100px" alt="A blue and green airplane beside buildings, clouds, and large MOM and DAD lettering" width="1200" height="467" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/for-mommy-and-daddy.webp" aria-label="Open artwork 16">
+          <button class="art-piece" id="art-for-mommy-and-daddy" type="button" data-art-src="assets/art/for-mommy-and-daddy.webp" data-art-name="For Mommy and Daddy" data-art-shape="portrait" aria-label="Open For Mommy and Daddy">
             <span class="art-sheet"><img src="assets/art/for-mommy-and-daddy-preview.webp" srcset="assets/art/for-mommy-and-daddy-preview.webp 577w, assets/art/for-mommy-and-daddy.webp 1154w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Rainbows, clouds, hearts, and handwritten messages for Mommy and Daddy" width="577" height="800" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/disney-bus.webp" aria-label="Open artwork 17">
+          <button class="art-piece" id="art-disney-bus" type="button" data-art-src="assets/art/disney-bus.webp" data-art-name="Disney World bus" aria-label="Open Disney World bus">
             <span class="art-sheet"><img src="assets/art/disney-bus-preview.webp" srcset="assets/art/disney-bus-preview.webp 800w, assets/art/disney-bus.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Drawing of a Disney World bus beneath clouds and a yellow sun" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/rainbow-family.webp" aria-label="Open artwork 18">
+          <button class="art-piece" id="art-rainbow-family" type="button" data-art-src="assets/art/rainbow-family.webp" data-art-name="Rainbow family" data-art-shape="portrait" aria-label="Open Rainbow family">
             <span class="art-sheet"><img src="assets/art/rainbow-family-preview.webp" srcset="assets/art/rainbow-family-preview.webp 577w, assets/art/rainbow-family.webp 1154w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Three smiling people beneath a rainbow, surrounded by colorful hearts" width="577" height="800" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/tree.webp" aria-label="Open artwork 19">
+          <button class="art-piece" id="art-tree" type="button" data-art-src="assets/art/tree.webp" data-art-name="Tree" data-art-shape="portrait" aria-label="Open Tree">
             <span class="art-sheet"><img src="assets/art/tree-preview.webp" srcset="assets/art/tree-preview.webp 577w, assets/art/tree.webp 1154w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Colored pencil drawing of a tree with labeled leaves, branches, and trunk" width="577" height="800" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/grass-type.webp" aria-label="Open artwork 20">
+          <button class="art-piece" id="art-grass-type" type="button" data-art-src="assets/art/grass-type.webp" data-art-name="Grass Type creatures" aria-label="Open Grass Type creatures">
             <span class="art-sheet"><img src="assets/art/grass-type-preview.webp" srcset="assets/art/grass-type-preview.webp 800w, assets/art/grass-type.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Green and blue creatures beneath the handwritten words Grass Type" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/ground-type.webp" aria-label="Open artwork 21">
+          <button class="art-piece" id="art-ground-type" type="button" data-art-src="assets/art/ground-type.webp" data-art-name="Ground Type creatures" aria-label="Open Ground Type creatures">
             <span class="art-sheet"><img src="assets/art/ground-type-preview.webp" srcset="assets/art/ground-type-preview.webp 800w, assets/art/ground-type.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Brown, yellow, and blue creatures beneath the handwritten words Ground Type" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/ghost-type.webp" aria-label="Open artwork 22">
+          <button class="art-piece" id="art-ghost-type" type="button" data-art-src="assets/art/ghost-type.webp" data-art-name="Ghost Type creatures" aria-label="Open Ghost Type creatures">
             <span class="art-sheet"><img src="assets/art/ghost-type-preview.webp" srcset="assets/art/ghost-type-preview.webp 800w, assets/art/ghost-type.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Purple and pink ghost creatures beneath the handwritten words Ghost Type" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/water-type.webp" aria-label="Open artwork 23">
+          <button class="art-piece" id="art-water-type" type="button" data-art-src="assets/art/water-type.webp" data-art-name="Water Type creatures" aria-label="Open Water Type creatures">
             <span class="art-sheet"><img src="assets/art/water-type-preview.webp" srcset="assets/art/water-type-preview.webp 800w, assets/art/water-type.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Blue and yellow water creatures beneath the handwritten words Water Type" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/fire-type.webp" aria-label="Open artwork 24">
+          <button class="art-piece" id="art-fire-type" type="button" data-art-src="assets/art/fire-type.webp" data-art-name="Fire Type creatures" aria-label="Open Fire Type creatures">
             <span class="art-sheet"><img src="assets/art/fire-type-preview.webp" srcset="assets/art/fire-type-preview.webp 800w, assets/art/fire-type.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Red and orange creatures with flames beneath the handwritten words Fire Type" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/fairy-type.webp" aria-label="Open artwork 25">
+          <button class="art-piece" id="art-fairy-type" type="button" data-art-src="assets/art/fairy-type.webp" data-art-name="Fairy Type creatures" aria-label="Open Fairy Type creatures">
             <span class="art-sheet"><img src="assets/art/fairy-type-preview.webp" srcset="assets/art/fairy-type-preview.webp 800w, assets/art/fairy-type.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Pink and yellow creatures beneath the handwritten words Fairy Type" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/colorful-creatures.webp" aria-label="Open artwork 26">
+          <button class="art-piece" id="art-colorful-creatures" type="button" data-art-src="assets/art/colorful-creatures.webp" data-art-name="Colorful creatures" aria-label="Open Colorful creatures">
             <span class="art-sheet"><img src="assets/art/colorful-creatures-preview.webp" srcset="assets/art/colorful-creatures-preview.webp 800w, assets/art/colorful-creatures.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Colored pencil drawing of red, green, blue, and yellow creatures" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/plants-and-bus.webp" aria-label="Open artwork 27">
+          <button class="art-piece" id="art-plants-and-bus" type="button" data-art-src="assets/art/plants-and-bus.webp" data-art-name="Plants and bus" aria-label="Open Plants and bus">
             <span class="art-sheet"><img src="assets/art/plants-and-bus-preview.webp" srcset="assets/art/plants-and-bus-preview.webp 800w, assets/art/plants-and-bus.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Pencil drawing of plants, flowers, and a bus" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/rocket.webp" aria-label="Open artwork 28">
+          <button class="art-piece" id="art-rocket" type="button" data-art-src="assets/art/rocket.webp" data-art-name="Rocket" aria-label="Open Rocket">
             <span class="art-sheet"><img src="assets/art/rocket-preview.webp" srcset="assets/art/rocket-preview.webp 800w, assets/art/rocket.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Crayon drawing of a rocket above mountains beneath a yellow sun and blue clouds" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/earth.webp" aria-label="Open artwork 29">
+          <button class="art-piece" id="art-earth" type="button" data-art-src="assets/art/earth.webp" data-art-name="Earth" aria-label="Open Earth">
             <span class="art-sheet"><img src="assets/art/earth-preview.webp" srcset="assets/art/earth-preview.webp 800w, assets/art/earth.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Crayon drawing of a blue and green Earth surrounded by planets, stars, and small outlined shapes" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/green-truck.webp" aria-label="Open artwork 30">
+          <button class="art-piece" id="art-green-truck" type="button" data-art-src="assets/art/green-truck.webp" data-art-name="Green truck" aria-label="Open Green truck">
             <span class="art-sheet"><img src="assets/art/green-truck-preview.webp" srcset="assets/art/green-truck-preview.webp 800w, assets/art/green-truck.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Crayon drawing of a green truck beside a red building, trees, and a road" width="800" height="577" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/for-daddy.jpg" aria-label="Open artwork 31">
-            <span class="art-sheet"><img src="assets/art/for-daddy.jpg" alt="A crayon rainbow, sun, clouds, hearts, and a message for Daddy" width="1152" height="1600" loading="lazy" decoding="async" /></span>
+          <button class="art-piece" id="art-for-daddy" type="button" data-art-src="assets/art/for-daddy.jpg" data-art-name="For Daddy" data-art-shape="portrait" aria-label="Open For Daddy">
+            <span class="art-sheet"><img src="assets/art/for-daddy-preview.webp" srcset="assets/art/for-daddy-preview.webp 576w, assets/art/for-daddy.jpg 1152w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="A crayon rainbow, sun, clouds, hearts, and a message for Daddy" width="576" height="800" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/pokemon-world.jpg" aria-label="Open artwork 32">
-            <span class="art-sheet"><img src="assets/art/pokemon-world.jpg" alt="A crayon drawing of Pokémon and colorful shapes" width="1600" height="1152" loading="lazy" decoding="async" /></span>
+          <button class="art-piece" id="art-pokemon-world" type="button" data-art-src="assets/art/pokemon-world.jpg" data-art-name="Pokémon world" aria-label="Open Pokémon world">
+            <span class="art-sheet"><img src="assets/art/pokemon-world-preview.webp" srcset="assets/art/pokemon-world-preview.webp 800w, assets/art/pokemon-world.jpg 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="A crayon drawing of Pokémon and colorful shapes" width="800" height="576" loading="lazy" decoding="async" /></span>
           </button>
 
-          <button class="art-piece" type="button" data-art-src="assets/art/pokemon-battle.jpg" aria-label="Open artwork 33">
-            <span class="art-sheet"><img src="assets/art/pokemon-battle.jpg" alt="A crayon drawing of Pokémon in a battle scene" width="1600" height="1150" loading="lazy" decoding="async" /></span>
+          <button class="art-piece" id="art-pokemon-battle" type="button" data-art-src="assets/art/pokemon-battle.jpg" data-art-name="Pokémon battle" aria-label="Open Pokémon battle">
+            <span class="art-sheet"><img src="assets/art/pokemon-battle-preview.webp" srcset="assets/art/pokemon-battle-preview.webp 800w, assets/art/pokemon-battle.jpg 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="A crayon drawing of Pokémon in a battle scene" width="800" height="575" loading="lazy" decoding="async" /></span>
           </button>
 
         </div>
@@ -227,10 +243,26 @@
       </section>
       <dialog class="art-lightbox" aria-labelledby="art-lightbox-title">
         <div class="art-lightbox-bar">
-          <h2 class="visually-hidden" id="art-lightbox-title">Artwork close-up</h2>
+          <h2 id="art-lightbox-title">Artwork close-up</h2>
+          <p class="art-position" aria-live="polite" aria-atomic="true"></p>
           <button class="art-close" type="button" aria-label="Close artwork">close</button>
         </div>
-        <img alt="" />
+    <div class="art-viewer-stage" aria-busy="false" tabindex="0" aria-label="Drawing close-up">
+          <img class="art-lightbox-image" alt="" hidden />
+          <p class="art-loading" role="status" hidden>Loading drawing…</p>
+          <div class="art-error" hidden>
+            <p role="alert">This drawing couldn’t load.</p>
+            <button class="art-retry" type="button">Try again</button>
+          </div>
+        </div>
+        <div class="art-lightbox-controls" aria-label="Artwork controls">
+      <button class="art-prev" type="button" aria-label="Previous drawing">← previous</button>
+      <button class="art-next" type="button" aria-label="Next drawing">next →</button>
+      <button class="art-zoom" type="button" aria-pressed="false">Zoom</button>
+          <a class="art-original" href="assets/art/fei-green-hearts.webp" target="_blank" rel="noopener noreferrer">Full size ↗</a>
+          <button class="art-share" type="button">Share</button>
+        </div>
+        <p class="art-share-status" role="status" aria-live="polite"></p>
       </dialog>
     </main>
     <footer class="gallery-footer">
@@ -263,8 +295,7 @@
       </button>
       </div>
     </footer>
-    <script src="script.js?v=20261003-gallery-v19"></script>
-    <script src="gallery.js?v=20261003-gallery-v19"></script>
-    <script src="pinball.js?v=20261003-gallery-v19"></script>
+    <script src="script.js?v=20261003-gallery-v23"></script>
+    <script src="gallery.js?v=20261003-gallery-v23"></script>
   </body>
 </html>

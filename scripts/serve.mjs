@@ -6,8 +6,8 @@ import path from 'node:path';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const port = Number(process.env.PORT || 4173);
 const pages = new Set(['index.html', 'styles.css', 'script.js', 'pinball.js', 'cards.js', 'gallery.js']);
-const asset = /^(?:assets\/vincent-spiderman-sanitized\.png|assets\/(?:art|memories|pokemon|hero|fonts|planet-voices|theme)\/[a-zA-Z0-9._-]+\.(?:jpg|png|webp|mp3|woff2|txt))$/;
-const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.jpg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.mp3': 'audio/mpeg', '.woff2': 'font/woff2', '.txt': 'text/plain; charset=utf-8' };
+const asset = /^(?:assets\/(?:vincent-spiderman-sanitized\.png|favicon\.svg|favicon-32\.png|apple-touch-icon\.png|share-card\.jpg)|assets\/(?:art|memories|pokemon|hero|fonts|planet-voices|theme)\/[a-zA-Z0-9._-]+\.(?:jpg|png|webp|mp3|woff2|txt))$/;
+const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.jpg': 'image/jpeg', '.png': 'image/png', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.mp3': 'audio/mpeg', '.woff2': 'font/woff2', '.txt': 'text/plain; charset=utf-8' };
 
 const server = http.createServer(async (request, response) => {
   response.setHeader('X-Content-Type-Options', 'nosniff');

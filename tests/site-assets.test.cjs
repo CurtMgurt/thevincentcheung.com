@@ -9,7 +9,9 @@ const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const css = fs.readFileSync(path.join(root, 'styles.css'), 'utf8');
 
 test('every published image, font, and script reference resolves locally', () => {
-  const refs = [...html.matchAll(/(?:src|href|data-art-src)="([^"]+)"/g)].map(match => match[1]);
+  // Canonical URLs identify the site; they do not fetch a runtime dependency.
+  const runtimeHtml = html.replace(/<link\b[^>]*\brel="canonical"[^>]*>/g, '');
+  const refs = [...runtimeHtml.matchAll(/(?:src|href|data-art-src)="([^"]+)"/g)].map(match => match[1]);
   for (const match of html.matchAll(/srcset="([^"]+)"/g)) {
     refs.push(...match[1].split(',').map(candidate => candidate.trim().split(/\s+/)[0]));
   }
@@ -20,6 +22,11 @@ test('every published image, font, and script reference resolves locally', () =>
   }
   for (const match of html.matchAll(/data-planet="([^"]+)"/g)) {
     assert.ok(fs.existsSync(path.join(root, `assets/planet-voices/${match[1].toLowerCase()}.mp3`)));
+  }
+  for (const match of html.matchAll(/(?:property="og:image"|name="twitter:image") content="([^"]+)"/g)) {
+    const imageUrl = new URL(match[1]);
+    assert.equal(imageUrl.origin, 'https://thevincentcheung.com');
+    assert.ok(fs.existsSync(path.join(root, imageUrl.pathname)));
   }
 });
 
