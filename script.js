@@ -4,14 +4,9 @@ const soundToggle = document.querySelector('.sound-toggle');
 const hero = document.querySelector('.hero');
 const webButton = document.querySelector('.web-button');
 const miniPlanets = document.querySelectorAll('.mini-planet');
+const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+const soundPreferenceKey = 'vincent:sound';
 
-const messages = [
-  'Daddy, I love you!',
-  'Mommy, I love you!',
-  'Daddy & Mommy, I love you!',
-  'HEH HEH HEH',
-  'Cutie Bao Bao!'
-];
 const popColors = ['#fbf8ef', '#55bdb8', '#e5b748', '#6baa70', '#e66f5c', '#535fa2'];
 const webTargets = [
   { x: .04, y: .16 },
@@ -25,12 +20,25 @@ const webTargets = [
 const voiceVersion = '20260823-ana-neural-v1';
 let audioContext;
 let webTimer;
+let toastTimer;
+let nextLaughAt = 0;
 let soundOn = true;
+try {
+  soundOn = window.localStorage.getItem(soundPreferenceKey) !== 'off';
+} catch {
+  // Browsing and play still work when device storage is unavailable.
+}
+
+function updateSoundToggle() {
+  soundToggle.setAttribute('title', `Sound ${soundOn ? 'on' : 'off'}`);
+  soundToggle.setAttribute('aria-pressed', String(soundOn));
+}
+updateSoundToggle();
 
 miniPlanets.forEach((miniPlanet) => {
   const slug = miniPlanet.dataset.planet.toLowerCase();
   const voiceClip = new Audio(`assets/planet-voices/${slug}.mp3?v=${voiceVersion}`);
-  voiceClip.preload = 'auto';
+  voiceClip.preload = 'none';
   voiceClip.className = 'planet-voice';
   voiceClip.dataset.planet = miniPlanet.dataset.planet;
   voiceClip.setAttribute('aria-hidden', 'true');
@@ -44,7 +52,7 @@ function chirp(start = 330, end = 660) {
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
   if (!AudioContextClass) return;
   audioContext ||= new AudioContextClass();
-  if (audioContext.state === 'suspended') audioContext.resume();
+  if (audioContext.state === 'suspended') audioContext.resume().catch(() => {});
 
   const oscillator = audioContext.createOscillator();
   const gain = audioContext.createGain();
@@ -77,13 +85,29 @@ function sayPlanet(name, note, miniPlanet) {
 }
 
 function showToast(message) {
+  window.clearTimeout(toastTimer);
   toast.textContent = message;
   toast.classList.remove('show');
-  void toast.offsetWidth;
+  const inset = 20;
+  const halfWidth = toast.offsetWidth / 2;
+  const halfHeight = toast.offsetHeight / 2;
+  const heroRect = hero.getBoundingClientRect();
+  const minX = inset + halfWidth;
+  const maxX = Math.max(minX, hero.clientWidth - inset - halfWidth);
+  // Keep the laugh inside the visible part of the hero, even on a scrolled phone.
+  const minY = Math.max(inset, -heroRect.top + inset) + halfHeight;
+  const maxY = Math.max(minY, Math.min(hero.clientHeight, window.innerHeight - heroRect.top) - inset - halfHeight);
+  toast.style.left = `${minX + Math.random() * (maxX - minX)}px`;
+  toast.style.top = `${minY + Math.random() * (maxY - minY)}px`;
   toast.classList.add('show');
+  toastTimer = window.setTimeout(() => {
+    toast.classList.remove('show');
+    toast.textContent = '';
+  }, 1250);
 }
 
 function popPicture() {
+  if (motionPreference.matches) return;
   const heroRect = hero.getBoundingClientRect();
   const photoRect = planet.getBoundingClientRect();
   const burst = document.createElement('span');
@@ -105,6 +129,10 @@ function popPicture() {
 }
 
 function shootWeb() {
+  if (motionPreference.matches) {
+    showToast('thwip!');
+    return;
+  }
   if (webButton.getAttribute('aria-busy') === 'true') return;
 
   const heroRect = hero.getBoundingClientRect();
@@ -166,7 +194,10 @@ planet.addEventListener('click', () => {
   void planet.offsetWidth;
   planet.classList.add('boop');
   popPicture();
-  showToast(messages[Math.floor(Math.random() * messages.length)]);
+  if (Date.now() >= nextLaughAt && Math.random() < .35) {
+    showToast('hehehe');
+    nextLaughAt = Date.now() + 2200;
+  }
   chirp(310, 680);
 });
 
@@ -190,8 +221,12 @@ miniPlanets.forEach((miniPlanet) => {
 
 soundToggle.addEventListener('click', () => {
   soundOn = !soundOn;
-  soundToggle.textContent = `sound: ${soundOn ? 'on' : 'off'}`;
-  soundToggle.setAttribute('aria-pressed', String(soundOn));
+  updateSoundToggle();
+  try {
+    window.localStorage.setItem(soundPreferenceKey, soundOn ? 'on' : 'off');
+  } catch {
+    // The current choice still works for this visit.
+  }
   if (soundOn) {
     chirp();
   } else {
@@ -200,3 +235,98 @@ soundToggle.addEventListener('click', () => {
 });
 
 document.querySelector('#year').textContent = new Date().getFullYear();
+
+// Keep the planet names playful, with an optional five-world finding game.
+(() => {
+  const consolePanel = document.querySelector('.space-console');
+  const fact = document.querySelector('#planet-fact');
+  const missionStatus = document.querySelector('#mission-status');
+  const start = document.querySelector('.mission-start');
+  const stop = document.querySelector('.mission-stop');
+  if (!consolePanel || !fact || !missionStatus || !start || !stop) return;
+
+  const worlds = [...miniPlanets];
+  let mission = [];
+  let found = 0;
+  let waitingForNext = false;
+
+  function clearFound() {
+    worlds.forEach((world) => world.classList.remove('is-found'));
+  }
+
+  function prompt() {
+    waitingForNext = false;
+    start.disabled = true;
+    start.textContent = 'Mission in progress';
+    missionStatus.textContent = `${found} / ${mission.length} found. Find ${mission[found].dataset.planet}.`;
+  }
+
+  start.addEventListener('click', (event) => {
+    if (waitingForNext && found < mission.length) {
+      prompt();
+      if (event.detail === 0) worlds[0].focus();
+      return;
+    }
+    const shuffled = [...worlds];
+    for (let index = shuffled.length - 1; index > 0; index -= 1) {
+      const other = Math.floor(Math.random() * (index + 1));
+      [shuffled[index], shuffled[other]] = [shuffled[other], shuffled[index]];
+    }
+    mission = shuffled.slice(0, 5);
+    found = 0;
+    consolePanel.closest('.planet-band').classList.add('has-mission');
+    clearFound();
+    stop.hidden = false;
+    fact.textContent = 'Five worlds to find. Take your time, space explorer.';
+    prompt();
+    if (event.detail === 0) worlds[0].focus();
+  });
+
+  stop.addEventListener('click', () => {
+    mission = [];
+    consolePanel.closest('.planet-band').classList.remove('has-mission');
+    found = 0;
+    waitingForNext = false;
+    clearFound();
+    start.disabled = false;
+    start.textContent = 'Start a mission';
+    start.focus({ preventScroll: true });
+    stop.hidden = true;
+    missionStatus.textContent = 'Free to explore. Tap any world.';
+  });
+
+  worlds.forEach((world) => {
+    const name = world.dataset.planet;
+    const description = world.getAttribute('aria-label').replace(/^Hear .*? say its name\.\s*/, '');
+    world.addEventListener('click', (event) => {
+      fact.textContent = `${name} — ${description}`;
+      if (!mission.length || waitingForNext || found >= mission.length) return;
+      if (world !== mission[found]) {
+        missionStatus.textContent = `That's ${name}. Keep exploring — find ${mission[found].dataset.planet}.`;
+        return;
+      }
+      world.classList.add('is-found');
+      found += 1;
+      waitingForNext = true;
+      start.disabled = false;
+      if (found === mission.length) {
+        missionStatus.textContent = '5 / 5 found. Mission complete! You know your way around space.';
+        start.textContent = 'Play again';
+      } else {
+        missionStatus.textContent = `${found} / ${mission.length} found. You found ${name}! Ready for the next world?`;
+        start.textContent = 'Next world';
+      }
+      if (event.detail === 0) start.focus();
+    });
+  });
+  consolePanel.hidden = false;
+})();
+
+// Decorative orbits can rest while another part of the page is in view.
+if ('IntersectionObserver' in window) {
+  const orbitObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => entry.target.classList.toggle('is-offscreen', !entry.isIntersecting));
+  });
+  const solarSection = document.querySelector('.planet-band');
+  if (solarSection) orbitObserver.observe(solarSection);
+}

@@ -1,3 +1,27 @@
+@font-face {
+  font-family: "Fredoka";
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: url("assets/fonts/fredoka-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/dm-mono-400-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/dm-mono-500-latin.woff2") format("woff2");
+}
+
 :root {
   --paper: #fbf8ef;
   --surface: #eadbc9;
@@ -21,9 +45,10 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 
 html {
-  overflow-x: hidden;
+  overflow-x: clip;
   scroll-behavior: smooth;
   background: var(--paper);
 }
@@ -31,7 +56,7 @@ html {
 body {
   min-height: 100svh;
   margin: 0;
-  overflow-x: hidden;
+  overflow-x: clip;
   display: flex;
   flex-direction: column;
   color: var(--ink);
@@ -63,16 +88,25 @@ a:focus-visible {
 
 .site-header {
   width: min(1120px, calc(100% - 40px));
-  height: 82px;
-  margin: auto;
+  min-height: 62px;
+  margin: 14px auto 24px;
+  padding: 8px 12px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  position: relative;
+  justify-content: space-between;
+  gap: 12px;
+  position: sticky;
+  top: 10px;
   z-index: 20;
+  border: 1px solid rgba(49, 54, 56, .12);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, .96);
+  box-shadow: 0 5px 24px rgba(80, 65, 45, .07);
 }
 
 .sound-toggle {
+  min-height: 44px;
+  flex-shrink: 0;
   padding: 9px 14px;
   border: 1px solid rgba(49, 54, 56, .24);
   border-radius: 999px;
@@ -2206,19 +2240,19 @@ footer {
 footer p { margin: 0; }
 
 .toast {
-  position: fixed;
+  position: absolute;
   z-index: 50;
   top: 50%;
   left: 50%;
   opacity: 0;
   pointer-events: none;
   color: var(--ink);
-  font-size: clamp(34px, 7vw, 82px);
+  font-size: clamp(34px, 5vw, 64px);
   text-shadow: 5px 5px 0 var(--butter);
   transform: translate(-50%, -50%) scale(.7) rotate(-4deg);
 }
 
-.toast.show { animation: toast 1s ease; }
+.toast.show { opacity: 1; animation: toast 1.25s ease; }
 
 @keyframes float {
   0%, 100% { transform: rotate(1.4deg); }
@@ -2446,9 +2480,9 @@ footer p { margin: 0; }
   transition: transform .22s cubic-bezier(.2, .8, .2, 1);
 }
 
-.art-piece:nth-child(2) { --tilt: 1deg; --tape: rgba(85, 189, 184, .72); }
-.art-piece:nth-child(3) { --tilt: .65deg; --tape: rgba(230, 111, 92, .68); }
-.art-piece:nth-child(4) { --tilt: -1deg; --tape: rgba(107, 170, 112, .66); }
+.art-piece:nth-child(4n + 2) { --tilt: 1deg; --tape: rgba(85, 189, 184, .72); }
+.art-piece:nth-child(4n + 3) { --tilt: .65deg; --tape: rgba(230, 111, 92, .68); }
+.art-piece:nth-child(4n) { --tilt: -1deg; --tape: rgba(107, 170, 112, .66); }
 
 .art-piece:hover { transform: translateY(-7px) rotate(0); }
 
@@ -2510,21 +2544,26 @@ footer p { margin: 0; }
 
 .art-lightbox img {
   width: 100%;
-  max-height: calc(100vh - 82px);
+  height: auto;
+  max-height: calc(100vh - 132px);
   display: block;
   object-fit: contain;
   border: 1px solid rgba(49, 54, 56, .20);
   background: white;
 }
 
+.art-lightbox-bar {
+  min-height: 44px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .art-close {
   min-height: 42px;
   padding: 0 16px;
-  position: sticky;
-  z-index: 3;
-  top: 0;
-  float: right;
-  margin: 0 0 -48px 0;
   border: 2px solid var(--ink);
   border-radius: 999px;
   color: var(--ink);
@@ -2544,7 +2583,7 @@ footer p { margin: 0; }
 }
 
 @media (max-width: 760px) {
-  .site-header { height: 68px; }
+  .site-header { min-height: 62px; }
 
   .hero {
     min-height: 0;
@@ -2845,12 +2884,431 @@ footer p { margin: 0; }
   .art-grid { gap: 34px; }
 }
 
+/* A small map of Vincent's world, with the same paper-and-toy palette. */
+main > section, #top { scroll-margin-top: 94px; }
+#top:focus { outline: none; }
+
+.skip-link {
+  position: fixed;
+  top: 10px;
+  left: 16px;
+  z-index: 100;
+  padding: 14px 18px;
+  color: var(--white);
+  background: var(--berry);
+  border-radius: 12px;
+  transform: translateY(-160%);
+}
+.skip-link:focus { transform: none; }
+
+.home-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  min-height: 44px;
+  border-radius: 50%;
+  color: var(--berry);
+  background: #f5e6b2;
+  font-size: 27px;
+  text-decoration: none;
+}
+.home-mark span { position: absolute; top: 1px; right: 3px; font-size: 12px; color: var(--red-deep); }
+.site-nav { display: flex; align-items: center; gap: clamp(2px, 2vw, 22px); }
+.site-nav a {
+  display: grid;
+  place-items: center;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: 17px;
+  text-decoration: none;
+}
+.site-nav a:hover, .site-nav a:focus-visible { background: #e2efea; }
+.hero-intro { margin: -10px 0 26px; font-size: clamp(19px, 2.2vw, 25px); line-height: 1.4; color: #526566; }
+.art-preview {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: var(--ink);
+  text-decoration: none;
+  border-radius: 12px;
+}
+.art-preview img {
+  width: 78px;
+  height: 104px;
+  object-fit: cover;
+  padding: 5px;
+  border: 1px solid rgba(49, 54, 56, .24);
+  background: white;
+  box-shadow: 4px 5px 0 var(--surface);
+  transform: rotate(-6deg);
+}
+.art-preview small { display: block; margin-bottom: 6px; font: 500 10px "DM Mono", monospace; text-transform: uppercase; letter-spacing: .06em; color: #526566; }
+.art-preview strong { display: block; font-size: 20px; line-height: 1.15; font-weight: 500; }
+.art-preview-link { display: block; margin-top: 8px; color: var(--red-deep); font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
+.art-preview:hover .art-preview-link { color: var(--berry); }
+.photo-card picture { display: block; }
+
+.planet-band { overflow: clip; }
+.planet-band .space-console {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: 920px;
+  margin: 28px auto 24px;
+  padding: 20px 24px;
+  border: 1px solid rgba(75, 139, 136, .3);
+  border-radius: 20px;
+  background: #eef3e9;
+  text-align: left;
+  z-index: 10;
+}
+.planet-band.has-mission .space-console { position: sticky; top: 84px; box-shadow: 0 8px 20px rgba(49, 54, 56, .12); }
+.space-readout { min-width: 0; }
+.console-kicker { margin: 0 0 6px; color: #526566; font: 500 10px "DM Mono", monospace; text-transform: uppercase; letter-spacing: .09em; }
+#planet-fact { margin: 0; font-size: 17px; line-height: 1.4; }
+.mission-status { margin: 8px 0 0; color: #454d87; font-size: 17px; line-height: 1.35; font-weight: 600; }
+.mission-status:empty { display: none; }
+.mission-controls { display: grid; gap: 6px; justify-items: center; flex-shrink: 0; }
+.toy-button {
+  min-height: 46px;
+  padding: 12px 20px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  color: var(--ink);
+  background: var(--butter);
+  box-shadow: 0 4px 0 var(--ink);
+  font: 500 12px "DM Mono", monospace;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.toy-button:hover:not(:disabled) { transform: translateY(-2px); }
+.toy-button:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+.toy-button:disabled { color: #59665c; background: #e1e7da; box-shadow: none; border-color: #b9c4b6; cursor: default; }
+.text-button { min-height: 44px; padding: 8px 12px; border: 0; border-radius: 6px; color: #454d87; background: transparent; font: 500 12px "DM Mono", monospace; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.solar-map .mini-planet.is-found > span:last-child { color: #375f40; background: #dcebd4; border-radius: 999px; box-shadow: 0 0 0 5px #dcebd4; }
+.has-mission .mini-planet { scroll-margin-block: 310px 80px; }
+.planet-band.is-offscreen *, .planet-band.is-offscreen *::before, .planet-band.is-offscreen *::after { animation-play-state: paused !important; }
+
+.pinball-scoreboard { font-size: 12px; }
+.pinball-scoreboard p + p { font-size: 11px; }
+.pinball-scoreboard strong { font-size: 16px; color: var(--white); }
+.pinball-scoreboard #pinball-status { margin-top: 12px; padding-top: 10px; border-top: 1px solid #647375; color: #b9e4df; }
+.pinball-scoreboard.goal-pop #pinball-status { color: var(--ink); }
+.goalie-label { margin: 22px 0 16px; font-size: 17px; color: #526566; }
+.goalie-label strong { color: var(--berry); font-weight: 500; }
+.pinball-instructions { max-width: 320px; margin: 25px 0 0; color: #526566; font-size: 15px; line-height: 1.6; }
+kbd { padding: 1px 4px; border: 1px solid #bec3bb; border-radius: 4px; background: var(--white); font: 11px "DM Mono", monospace; white-space: nowrap; }
+.pinball-controls button { min-height: 48px; padding-inline: 10px; font-size: 12px; letter-spacing: 0; }
+.pinball-reset, .deck-shuffle { font-size: 11px; }
+.deck-status { color: #526566; font-size: 11px; letter-spacing: 0; }
+.deck-expand { display: block; margin: 34px auto 0; }
+.art-caption { display: block; padding: 18px 8px 0; font-size: 24px; line-height: 1.25; }
+.art-caption small { display: block; margin-top: 5px; color: #526566; font: 11px/1.5 "DM Mono", monospace; }
+.art-lightbox-bar h2 { margin: 0; color: var(--heading-aqua); font-size: clamp(19px, 3vw, 28px); font-weight: 500; }
+.art-close { min-height: 44px; flex-shrink: 0; font-size: 11px; }
+
+@media (max-width: 760px) {
+  .hero-copy .art-preview { margin-inline: auto; text-align: left; }
+  .hero { row-gap: 100px; }
+  .hero-intro { margin-top: -12px; }
+  .space-console { flex-direction: column; align-items: stretch; }
+  .planet-band .space-console { margin-inline: 6px; padding: 16px; gap: 14px; }
+  .mission-controls { display: flex; flex-wrap: wrap; gap: 8px 12px; }
+  .mission-controls .toy-button { font-size: 11px; padding-inline: 14px; }
+  #planet-fact, .mission-status { font-size: 15px; }
+  .pinball-instructions { margin-inline: auto; }
+}
+
+@media (max-width: 540px) {
+  .site-header { width: calc(100% - 16px); padding: 4px 6px; gap: 4px; min-height: 56px; top: 8px; }
+  .home-mark { display: none; }
+  .site-nav { flex: 1; justify-content: space-around; gap: 0; }
+  .site-nav a { padding-inline: 8px; font-size: 15px; }
+  .sound-toggle { padding-inline: 9px; font-size: 9px; letter-spacing: 0; }
+  .hero-intro { font-size: 20px; }
+  .hero { padding-top: 30px; row-gap: 80px; }
+  .hero h1 { margin-top: 12px; }
+  .art-preview { gap: 16px; }
+  .art-preview img { width: 64px; height: 86px; }
+  .art-preview strong { font-size: 18px; }
+  .planet-band.has-mission .space-console { top: 74px; }
+  .has-mission .console-kicker { display: none; }
+  .has-mission #planet-fact { font-size: 13px; }
+  .pinball-controls button { font-size: 11px; }
+  .pinball-zone { padding-top: 28px; }
+  .pinball-copy { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 14px 10px; }
+  .pinball-copy h2 { grid-column: 1 / -1; margin-bottom: 4px; font-size: 54px; line-height: 1; }
+  .pinball-copy h2 br { display: none; }
+  .pinball-scoreboard { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; width: 100%; margin: 0; padding: 14px; }
+  .pinball-scoreboard p { flex-direction: column; gap: 4px; font-size: 10px; }
+  .pinball-scoreboard p + p { margin: 0; font-size: 10px; }
+  .pinball-scoreboard #pinball-status { grid-column: 1 / -1; margin: 0; padding-top: 8px; }
+  .pinball-scoreboard strong { font-size: 18px; }
+  .goalie-label { margin: 0; text-align: left; font-size: 14px; }
+  .pinball-reset { padding-inline: 12px; font-size: 10px; }
+  .pinball-instructions { grid-column: 1 / -1; margin: 0; max-width: none; font-size: 13px; line-height: 1.5; }
+  .deck-status { font-size: 10px; }
+  .card-zone-heading { align-items: stretch; flex-direction: column; gap: 20px; }
+  .deck-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .deck-status { white-space: nowrap; }
+  .deck-shuffle { min-height: 44px; }
+  .art-lightbox { padding: 16px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: .01ms !important;
     animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* One quiet canvas; the photographs, drawings, and tape supply the color. */
+.gallery-home { background: var(--paper); }
+.gallery-home .hero {
+  min-height: 510px;
+  margin: 24px auto 54px;
+  padding-inline: 32px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.gallery-home h1 span {
+  color: var(--heading-coral);
+  text-shadow: 3px 4px 0 rgba(229, 183, 72, .35);
+}
+.drawings-note {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  margin: -8px 0 40px;
+  color: var(--heading-aqua);
+  font-size: clamp(20px, 2.2vw, 25px);
+  line-height: 1.4;
+  transform: rotate(-2deg);
+}
+.drawings-note strong {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.drawings-note strong::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -3px;
+  right: -2px;
+  bottom: 1px;
+  height: 8px;
+  border-radius: 48% 35% 50% 40%;
+  background: rgba(229, 183, 72, .48);
+  transform: rotate(-2deg);
+}
+.drawings-arrow {
+  position: absolute;
+  width: 72px;
+  height: 99px;
+  top: calc(100% + 3px);
+  left: 50%;
+  pointer-events: none;
+  color: var(--heading-coral);
+  transform: translateX(-50%) rotate(2deg);
+}
+.drawings-arrow path { fill: currentColor; }
+.drawings-arrow .drawings-arrow-shadow { fill: var(--butter); opacity: .55; }
+.gallery-home .orbit-scene { padding-bottom: 0; }
+.gallery-home .photo-stage { animation: none; transform: rotate(-1.5deg); }
+.gallery-home .photo-stage::before { display: none; }
+.photo-spark {
+  position: absolute;
+  z-index: 2;
+  width: 44px;
+  height: 50px;
+  pointer-events: none;
+}
+.photo-spark circle { fill: var(--heading-coral); }
+.photo-spark-top { top: -22px; left: -26px; color: var(--butter); transform: rotate(-12deg); }
+.photo-spark-bottom { bottom: -18px; right: -22px; width: 38px; height: 38px; color: var(--sky); transform: rotate(10deg); }
+.gallery-home .photo-card {
+  padding: 10px 10px 24px;
+  border: 1px solid rgba(86, 76, 61, .16);
+  background: var(--white);
+  box-shadow: 0 3px 6px rgba(86, 76, 61, .04), 0 14px 30px rgba(86, 76, 61, .09);
+}
+.gallery-home .photo-card::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  width: 88px;
+  height: 24px;
+  top: -12px;
+  left: 50%;
+  border: 1px solid rgba(86, 76, 61, .08);
+  background: rgba(229, 183, 72, .64);
+  box-shadow: 0 2px 4px rgba(86, 76, 61, .06);
+  transform: translateX(-50%) rotate(-2deg);
+}
+.gallery-home .photo-card::after {
+  width: 16px;
+  height: 16px;
+  right: 12px;
+  bottom: 4px;
+  color: var(--heading-coral);
+  background: transparent;
+  font-size: 13px;
+  transform: none;
+}
+.gallery-home .button-spider { filter: none; }
+.gallery-home .button-spider::before {
+  border-width: 1px;
+  box-shadow: 0 4px 10px rgba(86, 76, 61, .08);
+}
+.gallery-home .sound-toggle {
+  width: 44px;
+  height: 44px;
+  padding: 12px;
+  border: 0;
+  color: #6b726c;
+  background: transparent;
+  box-shadow: none;
+}
+.gallery-home .sound-toggle:hover {
+  color: var(--heading-aqua);
+  background: var(--surface-soft);
+  transform: none;
+}
+.sound-toggle svg { display: block; width: 20px; height: 20px; }
+.sound-toggle[aria-pressed="true"] .sound-muted,
+.sound-toggle[aria-pressed="false"] .sound-waves { display: none; }
+.gallery-home .gallery-collection {
+  margin-top: 0;
+  padding: 0 32px 12px;
+  scroll-margin-top: 32px;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.gallery-home .gallery-collection::before,
+.gallery-home .gallery-collection::after { display: none; }
+/* Fragment navigation focuses this region; its artwork buttons retain focus rings. */
+.gallery-home .gallery-collection:focus { outline: none; }
+.gallery-home .art-grid { gap: 44px; }
+.gallery-home .art-piece { --tape: rgba(229, 183, 72, .72); }
+.gallery-home .art-piece:nth-child(4n + 2) { --tape: rgba(85, 189, 184, .64); }
+.gallery-home .art-piece:nth-child(4n + 3) { --tape: rgba(230, 111, 92, .62); }
+.gallery-home .art-piece:nth-child(4n) { --tape: rgba(107, 170, 112, .56); }
+.gallery-home .art-piece:nth-child(even) { margin-top: 24px; }
+.gallery-home .art-piece[data-art-shape="panorama"] { grid-column: 1 / -1; margin-top: 0; transform: rotate(-.5deg); }
+.gallery-home .art-piece:hover { transform: translateY(-5px) rotate(0); }
+.gallery-home .art-sheet {
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  border: 1px solid rgba(86, 76, 61, .16);
+  background: var(--white);
+  box-shadow: 0 3px 6px rgba(86, 76, 61, .04), 0 14px 30px rgba(86, 76, 61, .09);
+}
+.gallery-home .art-sheet img { width: auto; height: auto; max-width: 100%; max-height: 100%; object-fit: contain; }
+.gallery-home .art-piece[data-art-shape="panorama"] .art-sheet { aspect-ratio: 5 / 2; }
+.gallery-home .art-sheet::before { box-shadow: 0 2px 4px rgba(86, 76, 61, .06); }
+.gallery-home .art-lightbox {
+  border: 1px solid rgba(86, 76, 61, .18);
+  border-radius: 18px;
+}
+.gallery-home .art-lightbox::backdrop { background: rgba(49, 54, 56, .60); backdrop-filter: blur(3px); }
+.gallery-home .art-close {
+  border: 1px solid rgba(86, 76, 61, .18);
+  box-shadow: 0 3px 6px rgba(86, 76, 61, .07);
+}
+.gallery-home .art-close:active { transform: translateY(1px); box-shadow: none; }
+.gallery-home .pinball-zone {
+  margin-top: 64px;
+  margin-bottom: 0;
+  padding-inline: 32px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.gallery-home .brick-playmat { display: none; }
+.gallery-home .pinball-copy h2 { font-size: 48px; line-height: 1; letter-spacing: -.025em; }
+.gallery-home .pinball-copy h2 span { color: var(--heading-aqua); text-shadow: none; }
+.gallery-home .pinball-scoreboard { box-shadow: 0 4px 10px rgba(86, 76, 61, .08); }
+.gallery-home .pinball-reset,
+.gallery-home .pinball-controls button {
+  border: 1px solid rgba(86, 76, 61, .18);
+  box-shadow: 0 3px 6px rgba(86, 76, 61, .07);
+}
+.gallery-home .pinball-reset:active,
+.gallery-home .pinball-controls button:active,
+.gallery-home .pinball-controls button.is-active,
+.gallery-home .pinball-controls button.is-pressed { transform: translateY(1px); box-shadow: none; }
+.gallery-footer {
+  width: min(1120px, calc(100% - 40px));
+  margin-inline: auto;
+  margin-top: 64px;
+  padding: 24px 32px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-controls { display: flex; align-items: center; gap: 12px; }
+.secret-play {
+  width: 48px;
+  height: 56px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--heading-aqua);
+  cursor: pointer;
+  transition: transform .2s ease;
+}
+.secret-play svg { display: block; width: 38px; height: 44px; margin: auto; }
+.secret-play:hover { transform: translateY(-3px) rotate(-6deg); }
+.gallery-home .art-lightbox-bar { justify-content: flex-end; }
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 760px) {
+  .gallery-home .hero { min-height: 0; row-gap: 148px; padding-inline: 20px; margin-bottom: 48px; }
+  .gallery-home .hero h1 { margin-bottom: 24px; }
+  .drawings-note { margin-inline: auto; margin-bottom: 22px; }
+  .gallery-home .spider-launcher { top: -66px; transform: scale(.76); }
+  .gallery-home .art-grid { grid-template-columns: minmax(0, 1fr); gap: 38px; }
+  .gallery-home .art-piece:nth-child(even) { margin-top: 0; }
+  .gallery-home .gallery-collection { padding-inline: 20px; }
+  .gallery-home .pinball-zone { padding-inline: 20px; }
+  .gallery-footer { padding-inline: 20px; }
+}
+@media (max-width: 540px) {
+  .gallery-home .gallery-collection { padding: 0 14px 12px; }
+  .gallery-home .art-sheet { padding: 10px; }
+  .gallery-footer { margin-top: 44px; padding-inline: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toast.show { animation: none; }
 }

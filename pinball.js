@@ -28,6 +28,16 @@
   const BALL_RADIUS = 9;
   const GRAVITY = 570;
   const MAX_BALL_SPEED = 1120;
+  const BEST_SCORE_KEY = 'vincent:brickball-best';
+  const debugEnabled = canvas.dataset.pinballDebug === 'true';
+  // Physics, launch delays, and celebrations all share a clock that advances
+  // only while the visible game is running.
+  let simulationTime = performance.now();
+  let previousTime = null;
+  let accumulator = 0;
+  let frameId = null;
+  let inViewport = false;
+  let dialogOpen = false;
   const rootStyles = getComputedStyle(document.documentElement);
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const LAUNCH_RELEASE_MS = reducedMotion ? 45 : 175;
@@ -115,22 +125,29 @@
   ];
 
   const scoreDisplay = document.querySelector('#pinball-score');
+  const bestDisplay = document.querySelector('#pinball-best');
+  const ballsDisplay = document.querySelector('#pinball-balls');
+  const goalieDisplay = document.querySelector('#pinball-goalie');
   const statusDisplay = document.querySelector('#pinball-status');
   const scoreboard = document.querySelector('.pinball-scoreboard');
   const launchButtons = [...document.querySelectorAll('.pinball-launch')];
   const resetButtons = [...document.querySelectorAll('.pinball-reset')];
   const leftButtons = [...document.querySelectorAll('.pinball-left')];
   const rightButtons = [...document.querySelectorAll('.pinball-right')];
+  const gameControls = new Set([canvas, ...launchButtons, ...resetButtons, ...leftButtons, ...rightButtons]);
 
   const input = {
     leftKey: false,
     rightKey: false,
+    leftButtonKeys: new Set(),
+    rightButtonKeys: new Set(),
     leftPointers: new Set(),
     rightPointers: new Set()
   };
 
   const game = {
     score: 0,
+    best: readBestScore(),
     lives: 3,
     state: 'ready',
     respawnAt: 0,
@@ -138,6 +155,8 @@
     goalRewardStartedAt: 0,
     goalRewardUntil: 0,
     goalReactionDirection: 1,
+    goalPopUntil: 0,
+    pendingSounds: [],
     flipperHits: 0,
     goals: 0,
     goalieTheme: -1,
@@ -145,6 +164,9 @@
     launchGateClosed: false,
     status: '',
     shownScore: -1,
+    shownBest: -1,
+    shownLives: -1,
+    shownGoalie: -1,
     particles: [],
     floaters: []
   };
@@ -254,11 +276,21 @@
   ];
 
   function leftDown() {
-    return input.leftKey || input.leftPointers.size > 0;
+    return input.leftKey || input.leftButtonKeys.size > 0 || input.leftPointers.size > 0;
   }
 
   function rightDown() {
-    return input.rightKey || input.rightPointers.size > 0;
+    return input.rightKey || input.rightButtonKeys.size > 0 || input.rightPointers.size > 0;
+  }
+
+  function readBestScore() {
+    try {
+      const stored = window.localStorage.getItem(BEST_SCORE_KEY);
+      const value = stored === null ? 0 : Number(stored);
+      return Number.isSafeInteger(value) && value >= 0 ? value : 0;
+    } catch {
+      return 0;
+    }
   }
 
   function setStatus(message) {
@@ -268,13 +300,34 @@
   }
 
   function pinballSound(start, end) {
+    if (!canRun()) return;
     window.dispatchEvent(new CustomEvent('vincent:chirp', { detail: { start, end } }));
   }
 
   function updateHud() {
+    if (game.score > game.best) {
+      game.best = game.score;
+      try {
+        window.localStorage.setItem(BEST_SCORE_KEY, String(game.best));
+      } catch {
+        // The best score still works for this visit when storage is unavailable.
+      }
+    }
     if (scoreDisplay && game.shownScore !== game.score) {
       game.shownScore = game.score;
       scoreDisplay.textContent = game.score.toLocaleString();
+    }
+    if (bestDisplay && game.shownBest !== game.best) {
+      game.shownBest = game.best;
+      bestDisplay.textContent = game.best.toLocaleString();
+    }
+    if (ballsDisplay && game.shownLives !== game.lives) {
+      game.shownLives = game.lives;
+      ballsDisplay.textContent = String(game.lives);
+    }
+    if (goalieDisplay && game.shownGoalie !== game.goalieTheme) {
+      game.shownGoalie = game.goalieTheme;
+      goalieDisplay.textContent = goalieLooks[game.goalieTheme].label;
     }
   }
 
@@ -306,6 +359,7 @@
       button.disabled = disabled;
     });
     canvas.style.cursor = game.state === 'ready' || game.state === 'gameover' ? 'pointer' : 'default';
+    if (canvas.dataset.gameState !== game.state) canvas.dataset.gameState = game.state;
   }
 
   function setReadyStatus() {
@@ -324,6 +378,7 @@
   }
 
   function resetGame() {
+    clearInputs();
     game.goalieTheme = (game.goalieTheme + 1) % goalieLooks.length;
     if (scoreboard) scoreboard.classList.remove('goal-pop');
     game.score = 0;
@@ -341,6 +396,8 @@
     game.goalRewardStartedAt = 0;
     game.goalRewardUntil = 0;
     game.goalReactionDirection = 1;
+    game.goalPopUntil = 0;
+    game.pendingSounds.length = 0;
     game.flipperHits = 0;
     game.goals = 0;
     parkBall();
@@ -351,6 +408,7 @@
       button.title = `Goalie: ${goalieLabel}. Start a new game to change goalie.`;
     });
     canvas.setAttribute('aria-label', `Brickball game with two flippers and a ${goalieLabel} goalie.`);
+    requestFrame();
   }
 
   function launchBall() {
@@ -362,7 +420,7 @@
     if (game.state !== 'ready') return;
 
     parkBall();
-    game.launchStartedAt = performance.now();
+    game.launchStartedAt = simulationTime;
     game.launchGateClosed = false;
     // The opening orbit should not score by itself; the goal arms after the
     // ball returns to the lower playfield and is available to the flippers.
@@ -372,6 +430,7 @@
     updatePrimaryControls();
     pinballSound(145, 230);
     canvas.focus({ preventScroll: true });
+    requestFrame();
   }
 
   function releaseBall(now) {
@@ -395,6 +454,7 @@
     if (!ball.active) return;
     ball.active = false;
     game.lives -= 1;
+    updateHud();
 
     if (game.lives <= 0) {
       game.state = 'gameover';
@@ -605,12 +665,14 @@
       scoreboard.classList.remove('goal-pop');
       void scoreboard.offsetWidth;
       scoreboard.classList.add('goal-pop');
-      window.setTimeout(() => scoreboard.classList.remove('goal-pop'), 1280);
+      game.goalPopUntil = now + 1280;
     }
     pinballSound(280, 760);
-    window.setTimeout(() => pinballSound(390, 930), 120);
-    window.setTimeout(() => pinballSound(520, 1120), 255);
-    window.setTimeout(() => pinballSound(680, 1260), 420);
+    game.pendingSounds.push(
+      { at: now + 120, start: 390, end: 930 },
+      { at: now + 255, start: 520, end: 1120 },
+      { at: now + 420, start: 680, end: 1260 }
+    );
   }
 
   function keeperPosition(now) {
@@ -737,14 +799,14 @@
     ball.vy *= scale;
   }
 
-  function syncDebugState(now = performance.now()) {
+  function syncDebugState(now = simulationTime) {
+    if (!debugEnabled) return;
     const rewardActive = now < game.goalRewardUntil;
     canvas.dataset.ballX = ball.x.toFixed(1);
     canvas.dataset.ballY = ball.y.toFixed(1);
     canvas.dataset.ballVx = ball.vx.toFixed(1);
     canvas.dataset.ballVy = ball.vy.toFixed(1);
     canvas.dataset.ballActive = String(ball.active);
-    canvas.dataset.gameState = game.state;
     canvas.dataset.goalieX = goal.keeperX.toFixed(1);
     canvas.dataset.goalArmed = String(game.goalArmed);
     canvas.dataset.flipperHits = String(game.flipperHits);
@@ -800,6 +862,15 @@
   function update(dt, now) {
     updateFlippers(dt);
     updateEffects(dt);
+    game.pendingSounds = game.pendingSounds.filter((sound) => {
+      if (now < sound.at) return true;
+      pinballSound(sound.start, sound.end);
+      return false;
+    });
+    if (game.goalPopUntil && now >= game.goalPopUntil) {
+      if (scoreboard) scoreboard.classList.remove('goal-pop');
+      game.goalPopUntil = 0;
+    }
 
     if (game.state === 'between' && now >= game.respawnAt) {
       game.state = 'ready';
@@ -1614,6 +1685,31 @@
     drawSceneryBrick(100, 88, 54, 18, brickColor.yellow, 2, 3);
     drawSceneryBrick(154, 88, 54, 18, brickColor.green, 2, 3);
     drawSceneryBrick(208, 88, 51, 18, brickColor.red, 2, 3);
+    // Stacked primary-color blocks make the toy construction language visible
+    // even before the ball reaches a target.
+    drawSceneryBrick(35, 384, 34, 25, brickColor.red, 2, 3);
+    drawSceneryBrick(35, 409, 52, 25, brickColor.aqua, 3, 3);
+    drawSceneryBrick(411, 374, 34, 25, brickColor.yellow, 2, 3);
+    drawSceneryBrick(393, 399, 52, 25, brickColor.green, 3, 3);
+  }
+
+  const playfieldCache = document.createElement('canvas');
+  playfieldCache.width = WIDTH;
+  playfieldCache.height = HEIGHT;
+  const playfieldCacheContext = playfieldCache.getContext('2d');
+  let playfieldCached = false;
+
+  function drawCachedPlayfield() {
+    if (playfieldCached) {
+      context.drawImage(playfieldCache, 0, 0);
+    } else {
+      drawPlayfield();
+      if (playfieldCacheContext) {
+        playfieldCacheContext.drawImage(canvas, 0, 0);
+        playfieldCached = true;
+      }
+    }
+    // Remaining balls are dynamic; the hundreds of background studs are not.
     for (let index = 0; index < 3; index += 1) {
       drawStud(
         context,
@@ -1624,13 +1720,6 @@
         index < game.lives ? brickColor.black : 'rgba(34,40,49,.28)'
       );
     }
-
-    // Stacked primary-color blocks make the toy construction language visible
-    // even before the ball reaches a target.
-    drawSceneryBrick(35, 384, 34, 25, brickColor.red, 2, 3);
-    drawSceneryBrick(35, 409, 52, 25, brickColor.aqua, 3, 3);
-    drawSceneryBrick(411, 374, 34, 25, brickColor.yellow, 2, 3);
-    drawSceneryBrick(393, 399, 52, 25, brickColor.green, 3, 3);
   }
 
   function drawGoal(now) {
@@ -1759,7 +1848,7 @@
     context.restore();
   }
 
-  function drawWalls() {
+  function drawWalls(now) {
     context.save();
     context.lineCap = 'round';
     context.lineJoin = 'round';
@@ -1777,7 +1866,7 @@
     });
 
     slings.forEach((sling) => {
-      const hot = performance.now() - sling.lastHit < 150;
+      const hot = now - sling.lastHit < 150;
       drawBrickBeam(sling, hot ? brickColor.yellow : brickColor.orange, hot ? 23 : 20);
     });
 
@@ -2010,11 +2099,11 @@
 
   function draw(now) {
     context.clearRect(0, 0, WIDTH, HEIGHT);
-    drawPlayfield();
+    drawCachedPlayfield();
     drawGoal(now);
     drawTargets(now);
     drawBumpers(now, now / 1000);
-    drawWalls();
+    drawWalls(now);
     drawFlipper(flippers[0], leftDown());
     drawFlipper(flippers[1], rightDown());
     drawLauncher(now);
@@ -2026,6 +2115,7 @@
 
   function setButtonState(buttons, pressed) {
     buttons.forEach((button) => {
+      if (button.getAttribute('aria-pressed') === String(pressed)) return;
       button.classList.toggle('is-pressed', pressed);
       button.setAttribute('aria-pressed', String(pressed));
     });
@@ -2034,17 +2124,49 @@
   function refreshControlStates() {
     setButtonState(leftButtons, leftDown());
     setButtonState(rightButtons, rightDown());
+    requestFrame();
+  }
+
+  function clearInputs() {
+    const wasPressed = leftDown() || rightDown();
+    input.leftKey = false;
+    input.rightKey = false;
+    input.leftButtonKeys.clear();
+    input.rightButtonKeys.clear();
+    input.leftPointers.clear();
+    input.rightPointers.clear();
+    if (wasPressed) refreshControlStates();
   }
 
   function bindHoldButtons(buttons, side) {
     const pointers = side === 'left' ? input.leftPointers : input.rightPointers;
+    const buttonKeys = side === 'left' ? input.leftButtonKeys : input.rightButtonKeys;
 
     buttons.forEach((button) => {
       button.style.touchAction = 'none';
       button.setAttribute('aria-pressed', 'false');
 
+      button.addEventListener('keydown', (event) => {
+        if (!isActivationKey(event) || !canRun() || event.altKey || event.ctrlKey || event.metaKey) return;
+        event.preventDefault();
+        buttonKeys.add(event.key);
+        refreshControlStates();
+      });
+      button.addEventListener('keyup', (event) => {
+        if (!isActivationKey(event)) return;
+        event.preventDefault();
+        buttonKeys.delete(event.key);
+        refreshControlStates();
+      });
+      button.addEventListener('blur', () => {
+        if (!buttonKeys.size) return;
+        buttonKeys.clear();
+        refreshControlStates();
+      });
+
       if ('PointerEvent' in window) {
         button.addEventListener('pointerdown', (event) => {
+          if (!canRun() || (event.pointerType === 'mouse' && event.button !== 0)) return;
           event.preventDefault();
           pointers.add(event.pointerId);
           if (button.setPointerCapture) button.setPointerCapture(event.pointerId);
@@ -2060,6 +2182,7 @@
         button.addEventListener('lostpointercapture', release);
       } else {
         button.addEventListener('mousedown', (event) => {
+          if (!canRun() || event.button !== 0) return;
           event.preventDefault();
           pointers.add('mouse');
           refreshControlStates();
@@ -2073,6 +2196,7 @@
           refreshControlStates();
         });
         button.addEventListener('touchstart', (event) => {
+          if (!canRun()) return;
           event.preventDefault();
           [...event.changedTouches].forEach((touch) => pointers.add(touch.identifier));
           refreshControlStates();
@@ -2087,13 +2211,8 @@
     });
   }
 
-  function isTypingTarget(target) {
-    return target instanceof HTMLElement && (
-      target.isContentEditable ||
-      target.tagName === 'INPUT' ||
-      target.tagName === 'TEXTAREA' ||
-      target.tagName === 'SELECT'
-    );
+  function isActivationKey(event) {
+    return event.code === 'Space' || event.key === ' ' || event.key === 'Enter';
   }
 
   bindHoldButtons(leftButtons, 'left');
@@ -2106,12 +2225,14 @@
   }));
 
   canvas.addEventListener('pointerdown', (event) => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
     event.preventDefault();
+    canvas.focus({ preventScroll: true });
     primaryAction();
   });
 
   window.addEventListener('keydown', (event) => {
-    if (isTypingTarget(event.target)) return;
+    if (!gameControls.has(event.target) || !canRun() || event.altKey || event.ctrlKey || event.metaKey) return;
 
     if (event.key === 'ArrowLeft') {
       event.preventDefault();
@@ -2121,7 +2242,7 @@
       event.preventDefault();
       input.rightKey = true;
       refreshControlStates();
-    } else if (event.code === 'Space' || event.key === ' ' || event.key === 'Enter') {
+    } else if (event.target === canvas && isActivationKey(event)) {
       event.preventDefault();
       if (!event.repeat) primaryAction();
     } else if (event.key.toLowerCase() === 'r') {
@@ -2131,47 +2252,120 @@
   });
 
   window.addEventListener('keyup', (event) => {
-    if (event.key === 'ArrowLeft') {
+    if (event.key === 'ArrowLeft' && input.leftKey) {
       input.leftKey = false;
       refreshControlStates();
-    } else if (event.key === 'ArrowRight') {
+    } else if (event.key === 'ArrowRight' && input.rightKey) {
       input.rightKey = false;
       refreshControlStates();
     }
   });
 
-  window.addEventListener('blur', () => {
-    input.leftKey = false;
-    input.rightKey = false;
-    input.leftPointers.clear();
-    input.rightPointers.clear();
-    refreshControlStates();
+  window.addEventListener('blur', clearInputs);
+  document.addEventListener('focusin', (event) => {
+    if (!gameControls.has(event.target)) clearInputs();
+  });
+  document.addEventListener('focusout', (event) => {
+    if (gameControls.has(event.target) && !gameControls.has(event.relatedTarget)) clearInputs();
   });
 
-  let previousTime = performance.now();
-  let accumulator = 0;
+  function canRun() {
+    return inViewport && !document.hidden && !dialogOpen;
+  }
+
+  function setRenderState(state) {
+    if (canvas.dataset.renderState !== state) canvas.dataset.renderState = state;
+  }
+
+  function requestFrame() {
+    if (!canRun() || frameId !== null) return;
+    if (previousTime === null) previousTime = performance.now();
+    setRenderState('running');
+    frameId = window.requestAnimationFrame(frame);
+  }
+
+  function needsFrames() {
+    return game.state === 'playing' || game.state === 'launching' || game.state === 'between' ||
+      game.particles.length > 0 || game.floaters.length > 0 || simulationTime < game.goalRewardUntil ||
+      flippers.some((flipper) => {
+        const pressed = flipper.side === 'left' ? leftDown() : rightDown();
+        return Math.abs(flipper.angle - (pressed ? flipper.activeAngle : flipper.restAngle)) > 0.001;
+      });
+  }
 
   function frame(now) {
-    const elapsed = Math.min((now - previousTime) / 1000, 0.05);
+    frameId = null;
+    if (!canRun()) {
+      syncActivity();
+      return;
+    }
+    const elapsed = Math.max(0, Math.min((now - previousTime) / 1000, 0.05));
     previousTime = now;
     accumulator += elapsed;
 
     while (accumulator >= STEP) {
-      update(STEP, now);
+      simulationTime += STEP * 1000;
+      update(STEP, simulationTime);
       accumulator -= STEP;
     }
 
-    draw(now);
-    window.requestAnimationFrame(frame);
+    draw(simulationTime);
+    if (needsFrames()) requestFrame();
+    else {
+      previousTime = null;
+      accumulator = 0;
+      setRenderState('idle');
+    }
   }
 
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-      previousTime = performance.now();
+  function syncActivity() {
+    if (canRun()) requestFrame();
+    else {
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+      frameId = null;
+      previousTime = null;
       accumulator = 0;
+      clearInputs();
+      setRenderState('paused');
     }
-  });
+  }
+
+  document.addEventListener('visibilitychange', syncActivity);
+
+  const dialogs = [...document.querySelectorAll('dialog')];
+  function syncDialogs() {
+    dialogOpen = dialogs.some((dialog) => dialog.open);
+    if (dialogOpen) clearInputs();
+    syncActivity();
+  }
+  if ('MutationObserver' in window && dialogs.length) {
+    const dialogObserver = new MutationObserver(syncDialogs);
+    dialogs.forEach((dialog) => dialogObserver.observe(dialog, { attributes: true, attributeFilter: ['open'] }));
+  }
+
+  function checkViewport() {
+    const bounds = canvas.getBoundingClientRect();
+    inViewport = bounds.bottom > 0 && bounds.top < window.innerHeight &&
+      bounds.right > 0 && bounds.left < window.innerWidth;
+    syncActivity();
+  }
+  if ('IntersectionObserver' in window) {
+    const viewportObserver = new IntersectionObserver((entries) => {
+      inViewport = entries.some((entry) => entry.isIntersecting);
+      syncActivity();
+    });
+    viewportObserver.observe(canvas);
+  } else {
+    window.addEventListener('scroll', checkViewport, { passive: true });
+    window.addEventListener('resize', checkViewport, { passive: true });
+  }
 
   resetGame();
-  window.requestAnimationFrame(frame);
+  // Paint once even below the fold, then sleep until the game is visible.
+  draw(simulationTime);
+  syncDialogs();
+  checkViewport();
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(requestFrame);
+  }
 })();

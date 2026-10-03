@@ -3,34 +3,46 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; style-src-attr 'none'; img-src 'self'; font-src 'self'; media-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta name="referrer" content="no-referrer" />
     <meta name="theme-color" content="#fbf8ef" />
-    <meta name="description" content="Vincent's little corner of the internet." />
-    <title>Vincent's Little Corner</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=20260826-card-art-gallery-v2" />
+    <meta name="description" content="Drawings and paintings by Vincent Cheung." />
+    <title>Vincent Cheung</title>
+    <link rel="preload" href="assets/fonts/fredoka-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="styles.css?v=20261003-gallery-v19" />
   </head>
-  <body>
-    <div class="page-texture" aria-hidden="true"></div>
-    <header class="site-header">
-      <button class="sound-toggle" type="button" aria-pressed="true">sound: on</button>
-    </header>
-
-    <main id="top">
+  <body class="gallery-home">
+    <a class="skip-link" href="#gallery">Skip to artwork</a>
+    <main id="top" tabindex="-1">
       <section class="hero">
-        <div class="web-decoration web-top" aria-hidden="true"></div>
-        <div class="web-decoration web-bottom" aria-hidden="true"></div>
         <div class="hero-copy">
           <h1>Hi, I'm<br /><span>Vincent.</span></h1>
+          <p class="drawings-note">Check out my <strong>drawings!
+              <svg class="drawings-arrow" viewBox="-16 0 96 132" aria-hidden="true" focusable="false">
+                <g transform="rotate(-10 32 10)">
+                  <path class="drawings-arrow-shadow" transform="translate(5 4)" d="M30 8h4q4 0 4 4v74h14q5 0 1 5l-17 28q-4 6-8 0L11 91q-4-5 1-5h14V12q0-4 4-4Z" />
+                  <path d="M30 8h4q4 0 4 4v74h14q5 0 1 5l-17 28q-4 6-8 0L11 91q-4-5 1-5h14V12q0-4 4-4Z" />
+                </g>
+              </svg>
+            </strong>
+          </p>
         </div>
-
-        <div class="orbit-scene" aria-label="Vincent in a masked hood at a café">
+        <div class="orbit-scene">
           <div class="photo-stage">
             <button class="photo-card planet" type="button" aria-label="Make Vincent's photo pop">
-            <img src="assets/vincent-spiderman-sanitized.png" alt="Vincent in a red masked hood, leaning on a café table" width="1448" height="1086" decoding="async" fetchpriority="high" />
-              <span class="photo-label">secret identity: classified</span>
+              <picture>
+                <source type="image/webp" srcset="assets/hero/vincent-480.webp 480w, assets/hero/vincent-800.webp 800w, assets/hero/vincent-1200.webp 1200w, assets/hero/vincent-1448.webp 1448w" sizes="(max-width: 760px) 85vw, (max-width: 1120px) 44vw, 490px" />
+                <img src="assets/vincent-spiderman-sanitized.png" alt="Vincent in a red masked hood, leaning on a café table" width="1448" height="1086" decoding="async" fetchpriority="high" />
+              </picture>
             </button>
+            <svg class="photo-spark photo-spark-top" viewBox="0 0 56 64" aria-hidden="true" focusable="false">
+              <path d="M24 3 30 23 49 29 30 35 24 55 18 35 0 29 18 23Z" fill="currentColor" />
+              <circle cx="48" cy="8" r="3" />
+            </svg>
+            <svg class="photo-spark photo-spark-bottom" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <path d="M28 1 33 16 47 21 33 26 28 41 23 26 9 21 23 16Z" fill="currentColor" />
+              <circle cx="5" cy="40" r="3" />
+            </svg>
             <div class="spider-launcher">
               <button class="web-button" type="button" aria-label="Help the tiny spider shoot a web" aria-busy="false">
                 <span class="button-web" aria-hidden="true"></span>
@@ -43,57 +55,134 @@
               </button>
             </div>
           </div>
-          <p class="poke">tap the hero for a picture pop</p>
+        </div>
+        <div class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+      </section>
+      <section class="art-zone gallery-collection" id="gallery" aria-label="Artwork by Vincent" tabindex="-1">
+        <div class="art-grid" role="group" aria-label="Artwork by Vincent">
+          <button class="art-piece" type="button" data-art-src="assets/art/numbered-world.webp" aria-label="Open artwork 1">
+            <span class="art-sheet"><img src="assets/art/numbered-world-preview.webp" srcset="assets/art/numbered-world-preview.webp 577w, assets/art/numbered-world.webp 1154w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Colorful figures, green trees, a sun, and a dark structure beside numbered blue lines" width="577" height="800" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/question-mark-doodles.webp" aria-label="Open artwork 2">
+            <span class="art-sheet"><img src="assets/art/question-mark-doodles-preview.webp" srcset="assets/art/question-mark-doodles-preview.webp 577w, assets/art/question-mark-doodles.webp 1154w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Black pen doodles in outlined boxes, several question marks, and Vincent's handwritten name" width="577" height="800" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/rainbow-hearts-star.webp" aria-label="Open artwork 3">
+            <span class="art-sheet"><img src="assets/art/rainbow-hearts-star-preview.webp" srcset="assets/art/rainbow-hearts-star-preview.webp 800w, assets/art/rainbow-hearts-star.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Colorful hearts, a rainbow, a yellow star, and a large pale purple star with faces" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/music-notes.webp" aria-label="Open artwork 4">
+            <span class="art-sheet"><img src="assets/art/music-notes-preview.webp" srcset="assets/art/music-notes-preview.webp 577w, assets/art/music-notes.webp 1154w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Pink and black musical notes and staves with hearts and handwritten messages for Mommy and Daddy" width="577" height="800" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/rainbow-hearts-faces.webp" aria-label="Open artwork 5">
+            <span class="art-sheet"><img src="assets/art/rainbow-hearts-faces-preview.webp" srcset="assets/art/rainbow-hearts-faces-preview.webp 800w, assets/art/rainbow-hearts-faces.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Pale purple faces surrounded by colorful hearts, a rainbow, and a yellow star" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/bus-rings.webp" aria-label="Open artwork 6">
+            <span class="art-sheet"><img src="assets/art/bus-rings-preview.webp" srcset="assets/art/bus-rings-preview.webp 800w, assets/art/bus-rings.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Concentric pencil rings around a red and blue circle and large blue lettering" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/rainbow-train.webp" aria-label="Open artwork 7">
+            <span class="art-sheet"><img src="assets/art/rainbow-train-preview.webp" srcset="assets/art/rainbow-train-preview.webp 800w, assets/art/rainbow-train.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="A dark train beneath a rainbow beside a blue building, green ground, clouds, and a yellow sun" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/rainbow-grid.webp" aria-label="Open artwork 8">
+            <span class="art-sheet"><img src="assets/art/rainbow-grid-preview.webp" srcset="assets/art/rainbow-grid-preview.webp 577w, assets/art/rainbow-grid.webp 1154w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Rainbow-colored bands filled with small outlined shapes, with clouds, hearts, and messages for Mommy and Daddy" width="577" height="800" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/ice-type.webp" aria-label="Open artwork 9">
+            <span class="art-sheet"><img src="assets/art/ice-type-preview.webp" srcset="assets/art/ice-type-preview.webp 800w, assets/art/ice-type.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Blue ice-themed creatures beneath handwritten Ice Type lettering" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/birthday-card-front.webp" aria-label="Open artwork 10">
+            <span class="art-sheet"><img src="assets/art/birthday-card-front-preview.webp" srcset="assets/art/birthday-card-front-preview.webp 800w, assets/art/birthday-card-front.webp 1477w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="A handmade card on orange paper with pencil people, yellow stars, a pencil heart, and red paper DAD lettering" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/birthday-card-back.webp" aria-label="Open artwork 11">
+            <span class="art-sheet"><img src="assets/art/birthday-card-back-preview.webp" srcset="assets/art/birthday-card-back-preview.webp 800w, assets/art/birthday-card-back.webp 1476w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="A handmade birthday card on orange paper with a rainbow, three people, red paper hearts, and handwritten birthday wishes for Dad" width="800" height="578" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/airplane-panorama.webp" data-art-shape="panorama" aria-label="Open artwork 12">
+            <span class="art-sheet"><img src="assets/art/airplane-panorama-preview.webp" srcset="assets/art/airplane-panorama-preview.webp 1200w, assets/art/airplane-panorama.webp 2400w" sizes="(max-width: 760px) calc(100vw - 96px), 1100px" alt="A blue and green airplane beside buildings, clouds, and large MOM and DAD lettering" width="1200" height="467" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/for-mommy-and-daddy.webp" aria-label="Open artwork 13">
+            <span class="art-sheet"><img src="assets/art/for-mommy-and-daddy-preview.webp" srcset="assets/art/for-mommy-and-daddy-preview.webp 577w, assets/art/for-mommy-and-daddy.webp 1154w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Rainbows, clouds, hearts, and handwritten messages for Mommy and Daddy" width="577" height="800" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/disney-bus.webp" aria-label="Open artwork 14">
+            <span class="art-sheet"><img src="assets/art/disney-bus-preview.webp" srcset="assets/art/disney-bus-preview.webp 800w, assets/art/disney-bus.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Drawing of a Disney World bus beneath clouds and a yellow sun" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/rainbow-family.webp" aria-label="Open artwork 15">
+            <span class="art-sheet"><img src="assets/art/rainbow-family-preview.webp" srcset="assets/art/rainbow-family-preview.webp 577w, assets/art/rainbow-family.webp 1154w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Three smiling people beneath a rainbow, surrounded by colorful hearts" width="577" height="800" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/tree.webp" aria-label="Open artwork 16">
+            <span class="art-sheet"><img src="assets/art/tree-preview.webp" srcset="assets/art/tree-preview.webp 577w, assets/art/tree.webp 1154w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Colored pencil drawing of a tree with labeled leaves, branches, and trunk" width="577" height="800" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/grass-type.webp" aria-label="Open artwork 17">
+            <span class="art-sheet"><img src="assets/art/grass-type-preview.webp" srcset="assets/art/grass-type-preview.webp 800w, assets/art/grass-type.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Green and blue creatures beneath the handwritten words Grass Type" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/ground-type.webp" aria-label="Open artwork 18">
+            <span class="art-sheet"><img src="assets/art/ground-type-preview.webp" srcset="assets/art/ground-type-preview.webp 800w, assets/art/ground-type.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Brown, yellow, and blue creatures beneath the handwritten words Ground Type" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/ghost-type.webp" aria-label="Open artwork 19">
+            <span class="art-sheet"><img src="assets/art/ghost-type-preview.webp" srcset="assets/art/ghost-type-preview.webp 800w, assets/art/ghost-type.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Purple and pink ghost creatures beneath the handwritten words Ghost Type" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/water-type.webp" aria-label="Open artwork 20">
+            <span class="art-sheet"><img src="assets/art/water-type-preview.webp" srcset="assets/art/water-type-preview.webp 800w, assets/art/water-type.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Blue and yellow water creatures beneath the handwritten words Water Type" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/fire-type.webp" aria-label="Open artwork 21">
+            <span class="art-sheet"><img src="assets/art/fire-type-preview.webp" srcset="assets/art/fire-type-preview.webp 800w, assets/art/fire-type.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Red and orange creatures with flames beneath the handwritten words Fire Type" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/fairy-type.webp" aria-label="Open artwork 22">
+            <span class="art-sheet"><img src="assets/art/fairy-type-preview.webp" srcset="assets/art/fairy-type-preview.webp 800w, assets/art/fairy-type.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Pink and yellow creatures beneath the handwritten words Fairy Type" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/colorful-creatures.webp" aria-label="Open artwork 23">
+            <span class="art-sheet"><img src="assets/art/colorful-creatures-preview.webp" srcset="assets/art/colorful-creatures-preview.webp 800w, assets/art/colorful-creatures.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Colored pencil drawing of red, green, blue, and yellow creatures" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/plants-and-bus.webp" aria-label="Open artwork 24">
+            <span class="art-sheet"><img src="assets/art/plants-and-bus-preview.webp" srcset="assets/art/plants-and-bus-preview.webp 800w, assets/art/plants-and-bus.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Pencil drawing of plants, flowers, and a bus" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/rocket.webp" aria-label="Open artwork 25">
+            <span class="art-sheet"><img src="assets/art/rocket-preview.webp" srcset="assets/art/rocket-preview.webp 800w, assets/art/rocket.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Crayon drawing of a rocket above mountains beneath a yellow sun and blue clouds" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/earth.webp" aria-label="Open artwork 26">
+            <span class="art-sheet"><img src="assets/art/earth-preview.webp" srcset="assets/art/earth-preview.webp 800w, assets/art/earth.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Crayon drawing of a blue and green Earth surrounded by planets, stars, and small outlined shapes" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/green-truck.webp" aria-label="Open artwork 27">
+            <span class="art-sheet"><img src="assets/art/green-truck-preview.webp" srcset="assets/art/green-truck-preview.webp 800w, assets/art/green-truck.webp 1600w" sizes="(max-width: 760px) calc(100vw - 96px), 460px" alt="Crayon drawing of a green truck beside a red building, trees, and a road" width="800" height="577" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/for-daddy.jpg" aria-label="Open artwork 28">
+            <span class="art-sheet"><img src="assets/art/for-daddy.jpg" alt="A crayon rainbow, sun, clouds, hearts, and a message for Daddy" width="1152" height="1600" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/pokemon-world.jpg" aria-label="Open artwork 29">
+            <span class="art-sheet"><img src="assets/art/pokemon-world.jpg" alt="A crayon drawing of Pokémon and colorful shapes" width="1600" height="1152" loading="lazy" decoding="async" /></span>
+          </button>
+
+          <button class="art-piece" type="button" data-art-src="assets/art/pokemon-battle.jpg" aria-label="Open artwork 30">
+            <span class="art-sheet"><img src="assets/art/pokemon-battle.jpg" alt="A crayon drawing of Pokémon in a battle scene" width="1600" height="1150" loading="lazy" decoding="async" /></span>
+          </button>
+
         </div>
       </section>
-
-      <section class="planet-band" id="solar-system" aria-labelledby="solar-title">
-        <div class="planet-playmat" aria-hidden="true">
-          <span class="playmat-orbit playmat-orbit-one"></span>
-          <span class="playmat-orbit playmat-orbit-two"></span>
-          <span class="playmat-ringed"></span>
-          <span class="playmat-crescent"></span>
-          <span class="playmat-comet"></span>
-          <span class="playmat-star playmat-star-one"></span>
-          <span class="playmat-star playmat-star-two"></span>
-          <span class="playmat-star playmat-star-three"></span>
-          <span class="playmat-star playmat-star-four"></span>
-          <span class="playmat-star playmat-star-five"></span>
-        </div>
-        <div class="solar-map-heading">
-          <p class="solar-kicker">tap a world &mdash; hear its name</p>
-          <h2 id="solar-title">Our solar<br /><span>system.</span></h2>
-          <p class="solar-scale">all together &middot; not to scale</p>
-        </div>
-
-        <div class="solar-map-window" role="group" aria-label="The Sun, planets, and dwarf planets arranged in outward order">
-          <div class="solar-map">
-              <svg class="solar-route solar-route-wide" viewBox="0 0 1000 570" preserveAspectRatio="none" aria-hidden="true">
-                <path d="M100 92 H900 C948 92 948 284 900 284 H100 C52 284 52 478 100 478 H700" />
-              </svg>
-              <svg class="solar-route solar-route-compact" viewBox="0 0 300 710" preserveAspectRatio="none" aria-hidden="true">
-                <path d="M50 68 H250 C282 68 282 211 250 211 H50 C18 211 18 354 50 354 H250 C282 354 282 497 250 497 H50 C18 497 18 640 50 640 H150" />
-              </svg>
-
-              <button class="mini-planet sun" type="button" data-planet="Sun" data-note="247" aria-label="Hear Sun say its name. The Sun is our star."><span class="planet-system" aria-hidden="true"><span class="planet-orb"></span></span><span>Sun</span></button>
-              <button class="mini-planet mercury" type="button" data-planet="Mercury" data-note="262" aria-label="Hear Mercury say its name. Mercury has no moons."><span class="planet-system" aria-hidden="true"><span class="planet-orb"></span></span><span>Mercury</span></button>
-              <button class="mini-planet venus" type="button" data-planet="Venus" data-note="294" aria-label="Hear Venus say its name. Venus has no moons."><span class="planet-system" aria-hidden="true"><span class="planet-orb"></span></span><span>Venus</span></button>
-              <button class="mini-planet earth" type="button" data-planet="Earth" data-note="330" aria-label="Hear Earth say its name. The Moon is orbiting Earth." title="Moon"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-2"><i class="moon-dot moon-silver"></i></span><span class="planet-orb"></span></span><span>Earth</span></button>
-              <button class="mini-planet mars" type="button" data-planet="Mars" data-note="349" aria-label="Hear Mars say its name. Phobos and Deimos are orbiting Mars." title="Phobos &middot; Deimos"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-1 fast"><i class="moon-dot moon-dark"></i></span><span class="moon-track orbit-4 slow"><i class="moon-dot moon-silver"></i></span><span class="planet-orb"></span></span><span>Mars</span></button>
-              <button class="mini-planet ceres" type="button" data-planet="Ceres" data-note="554" aria-label="Hear Ceres say its name. Ceres is a dwarf planet in the asteroid belt and has no moons."><span class="planet-system" aria-hidden="true"><span class="planet-orb"></span></span><span>Ceres</span></button>
-              <button class="mini-planet jupiter" type="button" data-planet="Jupiter" data-note="392" aria-label="Hear Jupiter say its name. Four featured Galilean moons are shown: Io, Europa, Ganymede, and Callisto." title="Featured moons: Io &middot; Europa &middot; Ganymede &middot; Callisto"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-1 fast"><i class="moon-dot moon-gold"></i></span><span class="moon-track orbit-2"><i class="moon-dot moon-cream"></i></span><span class="moon-track orbit-4 slow"><i class="moon-dot moon-silver moon-large"></i></span><span class="moon-track orbit-6 slower"><i class="moon-dot moon-dark"></i></span><span class="planet-orb"></span></span><span>Jupiter</span></button>
-              <button class="mini-planet saturn" type="button" data-planet="Saturn" data-note="440" aria-label="Hear Saturn say its name. Seven featured moons are shown: Mimas, Enceladus, Tethys, Dione, Rhea, Titan, and Iapetus." title="Featured moons: Mimas &middot; Enceladus &middot; Tethys &middot; Dione &middot; Rhea &middot; Titan &middot; Iapetus"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-1 fast"><i class="moon-dot moon-silver"></i></span><span class="moon-track orbit-2"><i class="moon-dot moon-cream"></i></span><span class="moon-track orbit-3"><i class="moon-dot moon-silver"></i></span><span class="moon-track orbit-4 slow"><i class="moon-dot moon-dark"></i></span><span class="moon-track orbit-5 slow"><i class="moon-dot moon-silver moon-large"></i></span><span class="moon-track orbit-6 slower"><i class="moon-dot moon-gold moon-large"></i></span><span class="moon-track orbit-7 slower"><i class="moon-dot moon-dark"></i></span><span class="planet-orb"><i class="planet-ring"></i></span></span><span>Saturn</span></button>
-              <button class="mini-planet uranus" type="button" data-planet="Uranus" data-note="494" aria-label="Hear Uranus say its name. Five major moons are shown: Miranda, Ariel, Umbriel, Titania, and Oberon." title="Major moons: Miranda &middot; Ariel &middot; Umbriel &middot; Titania &middot; Oberon"><span class="planet-system moon-plane-sideways" aria-hidden="true"><span class="moon-track orbit-1 fast"><i class="moon-dot moon-silver"></i></span><span class="moon-track orbit-2"><i class="moon-dot moon-cream"></i></span><span class="moon-track orbit-3 slow"><i class="moon-dot moon-dark"></i></span><span class="moon-track orbit-5 slow"><i class="moon-dot moon-silver moon-large"></i></span><span class="moon-track orbit-7 slower"><i class="moon-dot moon-dark"></i></span><span class="planet-orb"></span></span><span>Uranus</span></button>
-              <button class="mini-planet neptune" type="button" data-planet="Neptune" data-note="523" aria-label="Hear Neptune say its name. Featured moon Triton is shown orbiting backward." title="Featured moon: Triton (retrograde orbit)"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-5 retrograde"><i class="moon-dot moon-silver moon-large"></i></span><span class="planet-orb"></span></span><span>Neptune</span></button>
-              <button class="mini-planet pluto" type="button" data-planet="Pluto" data-note="587" aria-label="Hear Pluto say its name. Charon, Styx, Nix, Kerberos, and Hydra are orbiting Pluto." title="Charon &middot; Styx &middot; Nix &middot; Kerberos &middot; Hydra"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-2 fast"><i class="moon-dot moon-cream moon-charon"></i></span><span class="moon-track orbit-4"><i class="moon-dot moon-silver"></i></span><span class="moon-track orbit-5 slow"><i class="moon-dot moon-dark"></i></span><span class="moon-track orbit-6 slow"><i class="moon-dot moon-silver"></i></span><span class="moon-track orbit-7 slower"><i class="moon-dot moon-cream"></i></span><span class="planet-orb"></span></span><span>Pluto</span></button>
-              <button class="mini-planet haumea" type="button" data-planet="Haumea" data-note="622" aria-label="Hear Haumea say its name. Namaka and Hiʻiaka are orbiting Haumea." title="Namaka &middot; Hi&#x02BB;iaka"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-2 fast"><i class="moon-dot moon-silver"></i></span><span class="moon-track orbit-6 slow"><i class="moon-dot moon-cream moon-large"></i></span><span class="planet-orb"><i class="dwarf-ring"></i></span></span><span>Haumea</span></button>
-              <button class="mini-planet makemake" type="button" data-planet="Makemake" data-note="659" aria-label="Hear Makemake say its name. Its provisional moon MK 2 is orbiting." title="Provisional moon: MK 2"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-5 slow"><i class="moon-dot moon-dark"></i></span><span class="planet-orb"></span></span><span>Makemake</span></button>
-              <button class="mini-planet eris" type="button" data-planet="Eris" data-note="698" aria-label="Hear Eris say its name. Dysnomia is orbiting Eris." title="Dysnomia"><span class="planet-system" aria-hidden="true"><span class="moon-track orbit-5 slower"><i class="moon-dot moon-silver"></i></span><span class="planet-orb"></span></span><span>Eris</span></button>
-          </div>
-        </div>
-      </section>
-
-      <section class="pinball-zone" id="pinball" aria-labelledby="pinball-title">
+      <section class="pinball-zone" id="pinball" hidden aria-labelledby="pinball-title">
         <div class="brick-playmat" aria-hidden="true">
           <span class="playmat-brick playmat-brick-one"></span>
           <span class="playmat-brick playmat-brick-two"></span>
@@ -102,16 +191,20 @@
         </div>
         <div class="pinball-copy">
           <h2 id="pinball-title">Brick<br /><span>ball.</span></h2>
-          <div class="pinball-scoreboard" aria-live="polite">
+          <div class="pinball-scoreboard">
             <p>SCORE <strong id="pinball-score">0000</strong></p>
-            <p id="pinball-status">ready</p>
+            <p>BEST <strong id="pinball-best">0</strong></p>
+            <p>BALLS <strong id="pinball-balls">3</strong></p>
+            <p id="pinball-status" role="status" aria-atomic="true">ready</p>
             <span class="pinball-goal-badge" aria-hidden="true">GOAL! +500</span>
           </div>
+          <p class="goalie-label">in goal: <strong id="pinball-goalie">a surprise goalie</strong></p>
           <button class="pinball-reset" type="button" aria-label="Start a new game and change the goalie">&#8635; new game</button>
+          <p class="pinball-instructions" id="pinball-instructions">Tap launch, then hold the flippers.<br />On a keyboard, focus the game: <kbd>←</kbd> <kbd>→</kbd> flip, <kbd>Space</kbd> launches, <kbd>R</kbd> restarts.</p>
         </div>
 
         <div class="pinball-machine">
-          <canvas id="pinball-canvas" width="480" height="640" aria-label="A small playable Brickball game"></canvas>
+          <canvas id="pinball-canvas" width="480" height="640" aria-label="A small playable Brickball game" aria-describedby="pinball-instructions">Brickball needs a browser with canvas support. Browse the artwork above.</canvas>
           <div class="pinball-controls" aria-label="Brickball controls">
             <button class="pinball-left" type="button" aria-label="Left flipper">&#9664; left</button>
             <button class="pinball-launch" type="button">launch</button>
@@ -119,232 +212,46 @@
           </div>
         </div>
       </section>
-
-      <section class="card-zone" id="vincent-cards" aria-labelledby="card-zone-title">
-        <div class="card-zone-pattern" aria-hidden="true">
-          <span class="card-doodle card-doodle-bolt"></span>
-          <span class="card-doodle card-doodle-leaf"></span>
-          <span class="card-doodle card-doodle-star card-doodle-star-one"></span>
-          <span class="card-doodle card-doodle-star card-doodle-star-two"></span>
-          <span class="card-doodle card-doodle-spark"></span>
+      <dialog class="art-lightbox" aria-labelledby="art-lightbox-title">
+        <div class="art-lightbox-bar">
+          <h2 class="visually-hidden" id="art-lightbox-title">Artwork close-up</h2>
+          <button class="art-close" type="button" aria-label="Close artwork">close</button>
         </div>
-
-        <header class="card-zone-heading">
-          <div>
-            <p class="card-kicker">pick a card</p>
-            <h2 id="card-zone-title">Vincent's<br /><span>deck.</span></h2>
-          </div>
-          <div class="deck-controls">
-            <p class="deck-status" aria-live="polite"><strong id="cards-showing">0</strong> / 10 showing</p>
-            <button class="deck-shuffle" type="button">shuffle</button>
-          </div>
-        </header>
-
-        <div class="card-deck is-dealing" role="group" aria-label="Ten cards that reveal fun facts and illustrated memories about Vincent">
-          <button class="fact-card card-electric" type="button" data-card-name="Pikachu" data-memory-label="space ride" style="--deal-index: 0" aria-pressed="false" aria-label="Flip Pikachu card to reveal a Vincent fact and illustrated space-ride memory">
-            <span class="card-flipper">
-              <span class="card-face card-front">
-                <span class="card-topline"><strong>Pikachu</strong><i aria-hidden="true">&#9889;</i></span>
-                <span class="card-art"><img src="assets/pokemon/pikachu.png" alt="" loading="lazy" decoding="async" /></span>
-                <span class="card-foot"><span>electric</span><b aria-hidden="true">V&#9733;</b></span>
-              </span>
-              <span class="card-face card-back">
-                <span class="fact-number">fact 01</span>
-                <span class="memory-art"><img src="assets/memories/space-ride.jpg" alt="" loading="lazy" decoding="async" /></span>
-                <strong>Vincent knows all five dwarf planets.</strong>
-                <span class="flip-back">tap to flip back</span>
-              </span>
-            </span>
-          </button>
-
-          <button class="fact-card card-grass" type="button" data-card-name="Bulbasaur" data-memory-label="forest adventure" style="--deal-index: 1" aria-pressed="false" aria-label="Flip Bulbasaur card to reveal a Vincent fact and illustrated forest memory">
-            <span class="card-flipper">
-              <span class="card-face card-front">
-                <span class="card-topline"><strong>Bulbasaur</strong><i aria-hidden="true">&#9752;</i></span>
-                <span class="card-art"><img src="assets/pokemon/bulbasaur.png" alt="" loading="lazy" decoding="async" /></span>
-                <span class="card-foot"><span>grass</span><b aria-hidden="true">V&#9733;</b></span>
-              </span>
-              <span class="card-face card-back">
-                <span class="fact-number">fact 02</span>
-                <span class="memory-art"><img src="assets/memories/forest-stump.jpg" alt="" loading="lazy" decoding="async" /></span>
-                <strong>Vincent is an expert LEGO BrickHeadz builder.</strong>
-                <span class="flip-back">tap to flip back</span>
-              </span>
-            </span>
-          </button>
-
-          <button class="fact-card card-fire" type="button" data-card-name="Charmander" data-memory-label="red spinner" style="--deal-index: 2" aria-pressed="false" aria-label="Flip Charmander card to reveal a Vincent fact and illustrated red-spinner memory">
-            <span class="card-flipper">
-              <span class="card-face card-front">
-                <span class="card-topline"><strong>Charmander</strong><i aria-hidden="true">&#9670;</i></span>
-                <span class="card-art"><img src="assets/pokemon/charmander.png" alt="" loading="lazy" decoding="async" /></span>
-                <span class="card-foot"><span>fire</span><b aria-hidden="true">V&#9733;</b></span>
-              </span>
-              <span class="card-face card-back">
-                <span class="fact-number">fact 03</span>
-                <span class="memory-art"><img src="assets/memories/red-spin.jpg" alt="" loading="lazy" decoding="async" /></span>
-                <strong>His favorite color is red.</strong>
-                <span class="flip-back">tap to flip back</span>
-              </span>
-            </span>
-          </button>
-
-          <button class="fact-card card-water" type="button" data-card-name="Squirtle" data-memory-label="bike ride with Daddy" style="--deal-index: 3" aria-pressed="false" aria-label="Flip Squirtle card to reveal a Vincent fact and illustrated bike memory">
-            <span class="card-flipper">
-              <span class="card-face card-front">
-                <span class="card-topline"><strong>Squirtle</strong><i aria-hidden="true">&#9679;</i></span>
-                <span class="card-art"><img src="assets/pokemon/squirtle.png" alt="" loading="lazy" decoding="async" /></span>
-                <span class="card-foot"><span>water</span><b aria-hidden="true">V&#9733;</b></span>
-              </span>
-              <span class="card-face card-back">
-                <span class="fact-number">fact 04</span>
-                <span class="memory-art"><img src="assets/memories/bike-daddy.jpg" alt="" loading="lazy" decoding="async" /></span>
-                <strong>He loves pinball and mini golf with Daddy.</strong>
-                <span class="flip-back">tap to flip back</span>
-              </span>
-            </span>
-          </button>
-
-          <button class="fact-card card-eevee" type="button" data-card-name="Eevee" data-memory-label="cozy time with Mommy" style="--deal-index: 4" aria-pressed="false" aria-label="Flip Eevee card to reveal a Vincent fact and illustrated Mommy memory">
-            <span class="card-flipper">
-              <span class="card-face card-front">
-                <span class="card-topline"><strong>Eevee</strong><i aria-hidden="true">&#10022;</i></span>
-                <span class="card-art"><img src="assets/pokemon/eevee.png" alt="" loading="lazy" decoding="async" /></span>
-                <span class="card-foot"><span>normal</span><b aria-hidden="true">V&#9733;</b></span>
-              </span>
-              <span class="card-face card-back">
-                <span class="fact-number">fact 05</span>
-                <span class="memory-art"><img src="assets/memories/mommy-couch.jpg" alt="" loading="lazy" decoding="async" /></span>
-                <strong>Vincent's favorite hugs come from Mommy.</strong>
-                <span class="flip-back">tap to flip back</span>
-              </span>
-            </span>
-          </button>
-
-          <button class="fact-card card-sleepy" type="button" data-card-name="Snorlax" data-memory-label="pastry stop" style="--deal-index: 5" aria-pressed="false" aria-label="Flip Snorlax card to reveal a Vincent fact and illustrated pastry memory">
-            <span class="card-flipper">
-              <span class="card-face card-front">
-                <span class="card-topline"><strong>Snorlax</strong><i aria-hidden="true">Zz</i></span>
-                <span class="card-art"><img src="assets/pokemon/snorlax.png" alt="" loading="lazy" decoding="async" /></span>
-                <span class="card-foot"><span>normal</span><b aria-hidden="true">V&#9733;</b></span>
-              </span>
-              <span class="card-face card-back">
-                <span class="fact-number">fact 06</span>
-                <span class="memory-art"><img src="assets/memories/pastry-peace.jpg" alt="" loading="lazy" decoding="async" /></span>
-                <strong>He's becoming an iron-powered snack champion.</strong>
-                <span class="flip-back">tap to flip back</span>
-              </span>
-            </span>
-          </button>
-
-          <button class="fact-card card-psyduck" type="button" data-card-name="Psyduck" data-memory-label="beach day" style="--deal-index: 6" aria-pressed="false" aria-label="Flip Psyduck card to reveal a Vincent fact and illustrated beach memory">
-            <span class="card-flipper">
-              <span class="card-face card-front">
-                <span class="card-topline"><strong>Psyduck</strong><i aria-hidden="true">?</i></span>
-                <span class="card-art"><img src="assets/pokemon/psyduck.png" alt="" loading="lazy" decoding="async" /></span>
-                <span class="card-foot"><span>water</span><b aria-hidden="true">V&#9733;</b></span>
-              </span>
-              <span class="card-face card-back">
-                <span class="fact-number">fact 07</span>
-                <span class="memory-art"><img src="assets/memories/beach-peace.jpg" alt="" loading="lazy" decoding="async" /></span>
-                <strong>Vincent reads comics—mostly the pictures. Words are next.</strong>
-                <span class="flip-back">tap to flip back</span>
-              </span>
-            </span>
-          </button>
-
-          <button class="fact-card card-ghost" type="button" data-card-name="Gengar" data-memory-label="water-slide splash" style="--deal-index: 7" aria-pressed="false" aria-label="Flip Gengar card to reveal a Vincent fact and illustrated water-slide memory">
-            <span class="card-flipper">
-              <span class="card-face card-front">
-                <span class="card-topline"><strong>Gengar</strong><i aria-hidden="true">&#9789;</i></span>
-                <span class="card-art"><img src="assets/pokemon/gengar.png" alt="" loading="lazy" decoding="async" /></span>
-                <span class="card-foot"><span>ghost</span><b aria-hidden="true">V&#9733;</b></span>
-              </span>
-              <span class="card-face card-back">
-                <span class="fact-number">fact 08</span>
-                <span class="memory-art"><img src="assets/memories/water-slide.jpg" alt="" loading="lazy" decoding="async" /></span>
-                <strong>He can buckle his car-seat belt all by himself.</strong>
-                <span class="flip-back">tap to flip back</span>
-              </span>
-            </span>
-          </button>
-
-          <button class="fact-card card-fairy" type="button" data-card-name="Jigglypuff" data-memory-label="drum session" style="--deal-index: 8" aria-pressed="false" aria-label="Flip Jigglypuff card to reveal a Vincent fact and illustrated drum memory">
-            <span class="card-flipper">
-              <span class="card-face card-front">
-                <span class="card-topline"><strong>Jigglypuff</strong><i aria-hidden="true">&#9834;</i></span>
-                <span class="card-art"><img src="assets/pokemon/jigglypuff.png" alt="" loading="lazy" decoding="async" /></span>
-                <span class="card-foot"><span>fairy</span><b aria-hidden="true">V&#9733;</b></span>
-              </span>
-              <span class="card-face card-back">
-                <span class="fact-number">fact 09</span>
-                <span class="memory-art"><img src="assets/memories/drum-beat.jpg" alt="" loading="lazy" decoding="async" /></span>
-                <strong>Vincent knows several KPop Demon Hunters songs by heart.</strong>
-                <span class="flip-back">tap to flip back</span>
-              </span>
-            </span>
-          </button>
-
-          <button class="fact-card card-memory" type="button" data-card-name="Vincent" data-memory-label="family pool day" style="--deal-index: 9" aria-pressed="false" aria-label="Flip Vincent's bonus card to reveal an illustrated family memory">
-            <span class="card-flipper">
-              <span class="card-face card-front">
-                <span class="card-topline"><strong>Vincent</strong><i aria-hidden="true">&#9733;</i></span>
-                <span class="card-art card-art-v" aria-hidden="true">
-                  <span class="v-crest"><span class="v-rank">&#9733; 001</span><b>V</b><small>VINCENT</small></span>
-                  <i>&#10022;</i><i>&#9733;</i><i>&#10022;</i><i>&#10022;</i>
-                </span>
-                <span class="card-foot"><span>special</span><b aria-hidden="true">V&#9733;</b></span>
-              </span>
-              <span class="card-face card-back">
-                <span class="fact-number">bonus</span>
-                <span class="memory-art"><img src="assets/memories/family-pool.jpg" alt="" loading="lazy" decoding="async" /></span>
-                <strong>Pool day with Mommy, Daddy, and shaved ice.</strong>
-                <span class="flip-back">tap to flip back</span>
-              </span>
-            </span>
-          </button>
-        </div>
-      </section>
-
-      <section class="art-zone" id="art-lab" aria-labelledby="art-zone-title">
-        <header class="art-zone-heading">
-          <div>
-            <p class="art-kicker">new masterpieces</p>
-            <h2 id="art-zone-title">Vincent's<br /><span>art lab.</span></h2>
-          </div>
-          <p class="art-hint">tap one to look closer</p>
-        </header>
-
-        <div class="art-grid" role="group" aria-label="Four pieces of artwork by Vincent">
-          <button class="art-piece" type="button" data-art-src="assets/art/for-daddy.jpg" aria-label="Open Vincent artwork one">
-            <span class="art-sheet"><img src="assets/art/for-daddy.jpg" alt="A crayon rainbow, sun, clouds, hearts, and a message for Daddy" loading="lazy" decoding="async" /></span>
-          </button>
-
-          <button class="art-piece" type="button" data-art-src="assets/art/pokemon-world.jpg" aria-label="Open Vincent artwork two">
-            <span class="art-sheet"><img src="assets/art/pokemon-world.jpg" alt="A busy crayon world filled with creatures, shapes, and bright color" loading="lazy" decoding="async" /></span>
-          </button>
-
-          <button class="art-piece" type="button" data-art-src="assets/art/pokemon-battle.jpg" aria-label="Open Vincent artwork three">
-            <span class="art-sheet"><img src="assets/art/pokemon-battle.jpg" alt="A landscape crayon battle scene with colorful creatures and flying shapes" loading="lazy" decoding="async" /></span>
-          </button>
-
-          <button class="art-piece" type="button" data-art-src="assets/art/balloon-painting.jpg" aria-label="Open Vincent artwork four">
-            <span class="art-sheet"><img src="assets/art/balloon-painting.jpg" alt="Purple, teal, and white balloon-print shapes on pale pink paper" loading="lazy" decoding="async" /></span>
-          </button>
-        </div>
-      </section>
-
-      <dialog class="art-lightbox" aria-label="Artwork close-up">
-        <button class="art-close" type="button" aria-label="Close artwork">close</button>
-        <img src="" alt="" />
+        <img alt="" />
       </dialog>
     </main>
-
-    <footer><p>&copy; <span id="year"></span> THEVINCENTCHEUNG.COM</p></footer>
-    <div class="toast" role="status" aria-live="polite"></div>
-    <script src="script.js?v=20260823-single-web"></script>
-    <script src="pinball.js?v=20260825-physical-goal-v1"></script>
-    <script src="cards.js?v=20260825-memory-cards-v1"></script>
-    <script src="gallery.js?v=20260826-art-lab-v2"></script>
+    <footer class="gallery-footer">
+      <p>&copy; <span id="year"></span> Vincent Cheung</p>
+      <div class="footer-controls">
+        <button class="sound-toggle" type="button" aria-label="Sound" aria-pressed="true" title="Sound on">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 5 5 9H2v6h3l5 4Z" />
+            <path class="sound-waves" d="M14 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" />
+            <path class="sound-muted" d="m15 9 6 6m0-6-6 6" />
+          </svg>
+        </button>
+      <button class="secret-play" type="button" aria-label="Open pinball" aria-expanded="false" aria-controls="pinball" title="A little something else">
+        <svg viewBox="0 0 48 56" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+          <path d="m13 43-3 9m25-9 3 9" fill="none" stroke="#4b8b88" stroke-width="3.5" stroke-linecap="round"/>
+          <rect x="7" y="3" width="34" height="43" rx="7" fill="#e66f5c" stroke="#cb6759" stroke-width="1.5"/>
+          <rect x="11" y="6" width="26" height="9" rx="3" fill="#e5b748"/>
+          <circle cx="20" cy="9.5" r="1.1" fill="#4b8b88"/>
+          <circle cx="28" cy="9.5" r="1.1" fill="#4b8b88"/>
+          <path d="M22 11q2 2.5 4 0" fill="none" stroke="#4b8b88" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M14 17h20l3 22H11z" fill="#fbf8ef" stroke="#cb6759" stroke-width="1.3" stroke-linejoin="round"/>
+          <path d="m33 19 2 15" fill="none" stroke="#55bdb8" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="18" cy="23" r="3.5" fill="#e5b748" stroke="#e66f5c" stroke-width="1.3"/>
+          <circle cx="28" cy="23" r="3.5" fill="#55bdb8" stroke="#4b8b88" stroke-width="1.3"/>
+          <circle cx="23" cy="30" r="3" fill="#efb1a1" stroke="#e66f5c" stroke-width="1.3"/>
+          <circle cx="15" cy="31" r="2.2" fill="#fffdf8" stroke="#4b8b88" stroke-width="1.2"/>
+          <path d="m15 35 6 3m12-3-6 3" fill="none" stroke="#e66f5c" stroke-width="3" stroke-linecap="round"/>
+          <rect x="18" y="41" width="12" height="2" rx="1" fill="#e5b748"/>
+        </svg>
+      </button>
+      </div>
+    </footer>
+    <script src="script.js?v=20261003-gallery-v19"></script>
+    <script src="gallery.js?v=20261003-gallery-v19"></script>
+    <script src="pinball.js?v=20261003-gallery-v19"></script>
   </body>
 </html>

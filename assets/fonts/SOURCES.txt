@@ -1,0 +1,18 @@
+Self-hosted font assets retrieved September 12, 2026 from Google Fonts.
+Both families are distributed under the SIL Open Font License 1.1.
+The complete licenses and copyright notices accompany these files.
+
+DM Mono 400, latin subset:
+https://fonts.gstatic.com/s/dmmono/v16/aFTU7PB1QTsUX8KYthqQBA.woff2
+DM Mono 500, latin subset:
+https://fonts.gstatic.com/s/dmmono/v16/aFTR7PB1QTsUX8KYvumzEYOtbQ.woff2
+License source:
+https://github.com/google/fonts/blob/main/ofl/dmmono/OFL.txt
+
+Fredoka, variable weight font, latin subset (used at 500-700):
+https://fonts.gstatic.com/s/fredoka/v17/X7n64b87HvSqjb_WIi2yDCRwoQ_k7367_DWu89U.woff2
+License source:
+https://github.com/google/fonts/blob/main/ofl/fredoka/OFL.txt
+
+The original typefaces are unchanged. Characters outside the supplied font
+subsets use the site's local system-font fallbacks.

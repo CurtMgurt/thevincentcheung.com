@@ -8,3 +8,7 @@ assets/planet-voices/*.wav
 # Local script caches.
 __pycache__/
 *.py[cod]
+
+# Local scan masters, design mockups, and unused texture experiments.
+mockups/
+assets/theme/
