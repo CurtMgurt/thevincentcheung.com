@@ -31,7 +31,16 @@ The responsive grid and close-up view include new entries automatically.
 The former space and card scripts/assets remain available in the repository
 but their sections are no longer shown on the homepage.
 
+The favicon and phone icon reuse the footer's smiling pinball SVG. Regenerate
+them with `node scripts/prepare_icons.mjs` when Sharp is available locally or
+through `NODE_PATH`. `scripts/prepare_brand_assets.py` uses the same generator
+before creating the social preview; it also requires Pillow. These tools are
+only for preparing assets and are not needed by the live site or deployment.
+
 ## Publishing
+
+GoDaddy manages the domain and DNS. GitHub Pages hosts the website. This is the
+complete hosting setup; no additional proxy or hosting service is configured.
 
 GitHub Pages uses the **GitHub Actions** source in the repository's Pages
 settings. `.github/workflows/pages.yml` runs the regression tests and builds
@@ -47,10 +56,14 @@ fails if a referenced file is missing or outside the allowlist. It excludes
 originals, mockups, tests, development scripts, unused artwork experiments, and
 repository files. Upload or deploy `_site/`, never the whole working folder.
 
-Keep `CNAME` set to `thevincentcheung.com` and HTTPS enforced in Pages settings.
-Require the `validate` status check for `main` to protect pull-request merges.
-Use strong two-factor authentication for both GitHub and the domain registrar;
-these account settings must be verified separately from repository checks.
+The custom domain is `thevincentcheung.com`, and HTTPS is enforced in Pages
+settings. Keep the matching `CNAME` file as a project reference. The `validate`
+status check is required for `main`, including for administrators; force pushes
+and branch deletion are blocked. Future changes should use a pull request that
+passes validation before merging.
+Use strong two-factor authentication for both GitHub and GoDaddy. These account
+settings remain unverified and require the owner's signed-in access. See
+[GoDaddy's two-step verification instructions](https://www.godaddy.com/help/enable-2-step-verification-7502).
 
 See [GitHub's custom Pages workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
@@ -64,19 +77,14 @@ The referrer policy is `no-referrer`.
 
 The local preview also sends anti-framing and MIME-sniffing response headers.
 These local headers do **not** configure GitHub Pages. The deployed GitHub Pages
-homepage already redirects HTTP to HTTPS and sends HSTS (verified September 12,
+homepage already redirects HTTP to HTTPS and sends HSTS (verified October 3,
 2026). Its repository files cannot configure arbitrary response headers.
 
-If a response-header-capable host or edge proxy is configured later, add:
-
-```text
-Content-Security-Policy: frame-ancestors 'none'
-X-Content-Type-Options: nosniff
-Referrer-Policy: no-referrer
-```
-
-The header CSP combines with the existing HTML policy. `frame-ancestors` must
-be a response header; adding it to the HTML policy would not block framing.
+GoDaddy DNS settings do not control the HTTP headers sent by GitHub Pages.
+Additional anti-framing and MIME-sniffing response headers are outside the
+current hosting setup, so they are not a pending deployment step. Keep the
+existing GoDaddy and GitHub Pages setup. `frame-ancestors` must be a response
+header; adding it to the HTML policy would not block framing.
 See the [MDN reference](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/frame-ancestors).
 
 For detailed game diagnostics during development, add
