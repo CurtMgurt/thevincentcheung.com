@@ -144,9 +144,9 @@ test('gallery has stable named artwork, responsive previews, and an initially hi
   assert.match(html, /<title>Vincent Cheung<\/title>/);
   assert.doesNotMatch(html, /art lab|mini-planet|fact-card|art-caption|data-art-title|script src="cards\.js/i);
   const pieces = [...html.matchAll(/<button class="art-piece"[^>]*>/g)].map(match => match[0]);
-  assert.equal(pieces.length, 33);
+  assert.equal(pieces.length, 42);
   const ids = pieces.map(piece => piece.match(/\bid="([^"]+)"/)[1]);
-  assert.equal(new Set(ids).size, 33);
+  assert.equal(new Set(ids).size, 42);
   for (const piece of pieces) {
     const name = piece.match(/data-art-name="([^"]+)"/)[1];
     assert.ok(piece.includes('aria-label="Open ' + name + '"'));
